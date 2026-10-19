@@ -13,3 +13,7 @@ logs/
 *.db-shm
 *.db-wal
 *.user
+
+# Local browser and print-preview artifacts
+.playwright-cli/
+output/

@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Media;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shanquan.Inventory.Desktop.ViewModels;
@@ -13,10 +14,9 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var builder = Host.CreateApplicationBuilder(args);
-        ConfigureServices(builder);
-
-        using var host = builder.Build();
+        using var host = Host.CreateDefaultBuilder(args)
+            .ConfigureServices(ConfigureServices)
+            .Build();
 
         host.Start();
         App.Services = host.Services;
@@ -33,15 +33,26 @@ sealed class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace();
 
-    private static void ConfigureServices(HostApplicationBuilder builder)
+        if (OperatingSystem.IsMacOS())
+        {
+            // Use Chinese font metrics on macOS to avoid clipping fallback glyphs.
+            // Keep the Windows 7 font selection and layout unchanged.
+            builder.With(new FontManagerOptions { DefaultFamilyName = "PingFang SC" });
+        }
+
+        return builder;
+    }
+
+    private static void ConfigureServices(HostBuilderContext _, IServiceCollection services)
     {
-        builder.Services.AddInventoryInfrastructure();
-        builder.Services.AddSingleton<IDialogService, DialogService>();
-        builder.Services.AddSingleton<MainViewModel>();
-        builder.Services.AddSingleton<MainWindow>();
+        services.AddInventoryInfrastructure();
+        services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<MainWindow>();
     }
 }

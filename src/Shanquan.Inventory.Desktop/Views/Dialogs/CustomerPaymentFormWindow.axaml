@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:compat="using:Shanquan.Inventory.Desktop.Compatibility"
         xmlns:vm="using:Shanquan.Inventory.Desktop.ViewModels.Dialogs"
         x:Class="Shanquan.Inventory.Desktop.Views.Dialogs.CustomerPaymentFormWindow"
         x:DataType="vm:CustomerPaymentFormViewModel"
@@ -16,15 +17,15 @@
         <Style Selector="Button.secondary"><Setter Property="Background" Value="White" /><Setter Property="Foreground" Value="#4A403C" /><Setter Property="BorderBrush" Value="#D8CEC8" /><Setter Property="BorderThickness" Value="1" /></Style>
         <Style Selector="Button.primary"><Setter Property="Background" Value="#9D3037" /><Setter Property="Foreground" Value="White" /><Setter Property="BorderThickness" Value="0" /><Setter Property="FontWeight" Value="SemiBold" /></Style>
     </Window.Styles>
-    <Grid RowDefinitions="Auto,*,Auto">
+    <compat:SpacingGrid RowDefinitions="Auto,*,Auto">
         <Border Background="White" BorderBrush="#E8E0DB" BorderThickness="0,0,0,1" Padding="30,24,30,21"><StackPanel><TextBlock Text="记一笔收款" FontSize="22" FontWeight="Bold" Foreground="#2F2926" /><TextBlock Text="收款将按最早欠款优先核销，并同步应收余额" Foreground="#817773" FontSize="11" Margin="0,6,0,0" /></StackPanel></Border>
         <Border Grid.Row="1" Background="White" BorderBrush="#E8E0DB" BorderThickness="1" CornerRadius="14" Margin="24,20" Padding="22,20"><StackPanel Spacing="15">
             <StackPanel><TextBlock Text="欠款客户" Classes="label" /><ComboBox ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer}" DisplayMemberBinding="{Binding DisplayName}" /><TextBlock Text="{Binding CustomerBalanceHint}" Foreground="#C07B24" FontSize="10" Margin="2,6,0,0" /></StackPanel>
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="14"><StackPanel><TextBlock Text="收款金额（元）" Classes="label" /><TextBox Text="{Binding AmountText}" PlaceholderText="0.00" /></StackPanel><StackPanel Grid.Column="1"><TextBlock Text="收款日期" Classes="label" /><CalendarDatePicker Classes="dateField" SelectedDate="{Binding ReceivedDate}" PlaceholderText="选择收款日期" /></StackPanel></Grid>
+            <compat:SpacingGrid ColumnDefinitions="*,*" ColumnSpacing="14"><StackPanel><TextBlock Text="收款金额（元）" Classes="label" /><TextBox Text="{Binding AmountText}" Watermark="0.00" /></StackPanel><StackPanel Grid.Column="1"><TextBlock Text="收款日期" Classes="label" /><CalendarDatePicker Classes="dateField" SelectedDate="{Binding ReceivedDate}" Watermark="选择收款日期" /></StackPanel></compat:SpacingGrid>
             <StackPanel><TextBlock Text="收款方式" Classes="label" /><ComboBox ItemsSource="{Binding PaymentMethods}" SelectedItem="{Binding SelectedPaymentMethod}" /></StackPanel>
-            <StackPanel><TextBlock Text="备注" Classes="label" /><TextBox Text="{Binding Note}" PlaceholderText="可填写流水号、经手人等信息" /></StackPanel>
+            <StackPanel><TextBlock Text="备注" Classes="label" /><TextBox Text="{Binding Note}" Watermark="可填写流水号、经手人等信息" /></StackPanel>
             <Border IsVisible="{Binding HasError}" Background="#FFF3F2" CornerRadius="8" Padding="10,7"><TextBlock Text="{Binding ErrorMessage}" Foreground="#B42318" FontSize="11" HorizontalAlignment="Center" /></Border>
         </StackPanel></Border>
-        <Border Grid.Row="2" Background="White" BorderBrush="#E8E0DB" BorderThickness="0,1,0,0" Padding="24,15"><Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10"><TextBlock Text="不允许收款金额超过当前欠款" Foreground="#817773" FontSize="10" VerticalAlignment="Center" /><Button Grid.Column="1" Classes="secondary" Click="Cancel_Click">取消</Button><Button Grid.Column="2" Classes="primary" Click="Save_Click">确认收款</Button></Grid></Border>
-    </Grid>
+        <Border Grid.Row="2" Background="White" BorderBrush="#E8E0DB" BorderThickness="0,1,0,0" Padding="24,15"><compat:SpacingGrid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10"><TextBlock Text="不允许收款金额超过当前欠款" Foreground="#817773" FontSize="10" VerticalAlignment="Center" /><Button Grid.Column="1" Classes="secondary" Click="Cancel_Click">取消</Button><Button Grid.Column="2" Classes="primary" Click="Save_Click">确认收款</Button></compat:SpacingGrid></Border>
+    </compat:SpacingGrid>
 </Window>

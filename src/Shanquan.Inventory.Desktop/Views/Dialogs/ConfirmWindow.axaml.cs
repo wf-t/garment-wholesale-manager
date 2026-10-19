@@ -22,7 +22,7 @@ public partial class ConfirmWindow : Window
             Height = 380;
             InputPanel.IsVisible = true;
             InputLabelText.Text = inputLabel;
-            OptionalInputTextBox.PlaceholderText = inputPlaceholder ?? "请输入";
+            OptionalInputTextBox.Watermark = inputPlaceholder ?? "请输入";
             Opened += (_, _) => OptionalInputTextBox.Focus();
         }
     }

@@ -258,13 +258,13 @@ public sealed class DatabaseInitializer(
 
         var warehouse = new WarehouseEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             Code = "W001",
             Name = "世贸二楼仓",
         };
         var customer = new CustomerEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             Code = "C001",
             Name = "郑州盛轩服饰",
             CreditLimitCents = 5_000_000,
@@ -274,7 +274,7 @@ public sealed class DatabaseInitializer(
         };
         var secondCustomer = new CustomerEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             Code = "C002",
             Name = "洛阳晴川女装",
             CreditLimitCents = 3_000_000,
@@ -284,15 +284,15 @@ public sealed class DatabaseInitializer(
         };
         var products = new[]
         {
-            new ProductEntity { Id = Guid.CreateVersion7(), StyleNumber = "22717", Name = "千仞四面弹入A裤", Category = "女裤", Season = "四季", BasePriceCents = 9_200, CostPriceCents = 5_500 },
-            new ProductEntity { Id = Guid.CreateVersion7(), StyleNumber = "22718", Name = "千仞四面弹夏神裤", Category = "女裤", Season = "夏季", BasePriceCents = 9_100, CostPriceCents = 5_300 },
-            new ProductEntity { Id = Guid.CreateVersion7(), StyleNumber = "33021", Name = "轻柔雪纺衬衫", Category = "上衣", Season = "春夏", BasePriceCents = 7_900, CostPriceCents = 4_500 },
+            new ProductEntity { Id = Guid.NewGuid(), StyleNumber = "22717", Name = "千仞四面弹入A裤", Category = "女裤", Season = "四季", BasePriceCents = 9_200, CostPriceCents = 5_500 },
+            new ProductEntity { Id = Guid.NewGuid(), StyleNumber = "22718", Name = "千仞四面弹夏神裤", Category = "女裤", Season = "夏季", BasePriceCents = 9_100, CostPriceCents = 5_300 },
+            new ProductEntity { Id = Guid.NewGuid(), StyleNumber = "33021", Name = "轻柔雪纺衬衫", Category = "上衣", Season = "春夏", BasePriceCents = 7_900, CostPriceCents = 4_500 },
         };
 
         db.Warehouses.Add(warehouse);
         db.Categories.AddRange(
-            new CategoryEntity { Id = Guid.CreateVersion7(), Name = "女裤" },
-            new CategoryEntity { Id = Guid.CreateVersion7(), Name = "上衣" });
+            new CategoryEntity { Id = Guid.NewGuid(), Name = "女裤" },
+            new CategoryEntity { Id = Guid.NewGuid(), Name = "上衣" });
         db.Customers.AddRange(customer, secondCustomer);
         db.Products.AddRange(products);
 
@@ -304,7 +304,7 @@ public sealed class DatabaseInitializer(
                 {
                     var sku = new SkuEntity
                     {
-                        Id = Guid.CreateVersion7(),
+                        Id = Guid.NewGuid(),
                         ProductId = product.Id,
                         ColorCode = color,
                         SizeCode = size,
@@ -313,7 +313,7 @@ public sealed class DatabaseInitializer(
                     db.Skus.Add(sku);
                     db.StockBalances.Add(new StockBalanceEntity
                     {
-                        Id = Guid.CreateVersion7(),
+                        Id = Guid.NewGuid(),
                         WarehouseId = warehouse.Id,
                         SkuId = sku.Id,
                         OnHand = 20,

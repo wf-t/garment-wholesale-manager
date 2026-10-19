@@ -1,0 +1,15 @@
+服装进销存批发管理——ZIP 更新说明
+
+1. 完全退出旧版程序。
+2. 建议先备份数据目录：
+   %LOCALAPPDATA%\ShanquanInventory
+3. 将旧程序文件夹改名为“旧版本备份”。
+4. 将本 ZIP 完整解压到原来的 D 盘程序位置。
+5. 双击 GarmentWholesaleManager.exe 启动。
+6. 检查客户、库存、销售单和应收数据。
+
+历史数据不在 ZIP 程序目录中，默认保存在：
+%LOCALAPPDATA%\ShanquanInventory\data\main.db
+
+请使用原来的 Windows 登录用户启动新版程序。
+不要删除 %LOCALAPPDATA%\ShanquanInventory 目录。

@@ -3,8 +3,8 @@ namespace Shanquan.Inventory.Infrastructure.Persistence;
 public sealed class ProductEntity
 {
     public Guid Id { get; set; }
-    public required string StyleNumber { get; set; }
-    public required string Name { get; set; }
+    public string StyleNumber { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public long BasePriceCents { get; set; }
     public long CostPriceCents { get; set; }
     public string? Category { get; set; }
@@ -16,16 +16,16 @@ public sealed class SkuEntity
 {
     public Guid Id { get; set; }
     public Guid ProductId { get; set; }
-    public required string ColorCode { get; set; }
-    public required string SizeCode { get; set; }
+    public string ColorCode { get; set; } = string.Empty;
+    public string SizeCode { get; set; } = string.Empty;
     public string? Barcode { get; set; }
 }
 
 public sealed class CustomerEntity
 {
     public Guid Id { get; set; }
-    public required string Code { get; set; }
-    public required string Name { get; set; }
+    public string Code { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public long CreditLimitCents { get; set; }
     public string? Phone { get; set; }
     public string? Address { get; set; }
@@ -38,24 +38,24 @@ public sealed class CustomerEntity
 public sealed class WarehouseEntity
 {
     public Guid Id { get; set; }
-    public required string Code { get; set; }
-    public required string Name { get; set; }
+    public string Code { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
 }
 
 public sealed class CategoryEntity
 {
     public Guid Id { get; set; }
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
 }
 
 public sealed class ColorEntity
 {
     public Guid Id { get; set; }
-    public required string ChineseName { get; set; }
-    public required string EnglishName { get; set; }
-    public required string Hex { get; set; }
+    public string ChineseName { get; set; } = string.Empty;
+    public string EnglishName { get; set; } = string.Empty;
+    public string Hex { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
 }
 
@@ -72,17 +72,17 @@ public sealed class StockBalanceEntity
 public sealed class SalesOrderEntity
 {
     public Guid Id { get; set; }
-    public required string Number { get; set; }
+    public string Number { get; set; } = string.Empty;
     public Guid CustomerId { get; set; }
     public Guid WarehouseId { get; set; }
-    public required string Status { get; set; }
+    public string Status { get; set; } = string.Empty;
     public long TotalQuantity { get; set; }
     public long GoodsAmountCents { get; set; }
     public long FreightCents { get; set; }
     public long DiscountCents { get; set; }
     public long TotalAmountCents { get; set; }
     public long ReceivedAmountCents { get; set; }
-    public required string PaymentStatus { get; set; }
+    public string PaymentStatus { get; set; } = string.Empty;
     public DateTimeOffset DocumentDate { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? ApprovedAt { get; set; }
@@ -99,9 +99,9 @@ public sealed class SalesDraftEntity
     public Guid WarehouseId { get; set; }
     public long FreightCents { get; set; }
     public long DiscountCents { get; set; }
-    public required string PaymentStatus { get; set; }
+    public string PaymentStatus { get; set; } = string.Empty;
     public DateTimeOffset DocumentDate { get; set; }
-    public required string LinesJson { get; set; }
+    public string LinesJson { get; set; } = string.Empty;
     public DateTimeOffset UpdatedAt { get; set; }
 }
 
@@ -119,7 +119,7 @@ public sealed class SalesOrderLineEntity
 public sealed class ShipmentEntity
 {
     public Guid Id { get; set; }
-    public required string Number { get; set; }
+    public string Number { get; set; } = string.Empty;
     public Guid SalesOrderId { get; set; }
     public Guid CustomerId { get; set; }
     public Guid WarehouseId { get; set; }
@@ -143,12 +143,12 @@ public sealed class StockMovementEntity
     public Guid Id { get; set; }
     public Guid WarehouseId { get; set; }
     public Guid SkuId { get; set; }
-    public required string MovementType { get; set; }
+    public string MovementType { get; set; } = string.Empty;
     public long OnHandChange { get; set; }
     public long ReservedChange { get; set; }
     public long OnHandAfter { get; set; }
     public long ReservedAfter { get; set; }
-    public required string ReferenceNumber { get; set; }
+    public string ReferenceNumber { get; set; } = string.Empty;
     public DateTimeOffset CreatedAt { get; set; }
 }
 
@@ -156,9 +156,9 @@ public sealed class ReceivableEntryEntity
 {
     public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
-    public required string EntryType { get; set; }
+    public string EntryType { get; set; } = string.Empty;
     public long AmountCents { get; set; }
-    public required string ReferenceNumber { get; set; }
+    public string ReferenceNumber { get; set; } = string.Empty;
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? DueAt { get; set; }
     public string? PaymentMethod { get; set; }

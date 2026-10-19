@@ -44,7 +44,15 @@ public sealed record BusinessWorkspace(
     IReadOnlyList<StockListItem> Stock,
     IReadOnlyList<StockMovementListItem> StockMovements,
     IReadOnlyList<ReceivableListItem> Receivables,
-    IReadOnlyList<OpenReceivableListItem> OpenReceivables);
+    IReadOnlyList<OpenReceivableListItem> OpenReceivables,
+    IReadOnlyList<SalesPeriodSummary> SalesPeriodSummaries);
+
+public sealed record SalesPeriodSummary(
+    int Year,
+    int Month,
+    long AmountCents,
+    long Quantity,
+    int OrderCount);
 
 public sealed record CustomerListItem(
     Guid Id,

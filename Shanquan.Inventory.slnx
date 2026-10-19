@@ -6,6 +6,7 @@
     <Project Path="src/Shanquan.Inventory.Infrastructure/Shanquan.Inventory.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Shanquan.Inventory.Desktop.Tests/Shanquan.Inventory.Desktop.Tests.csproj" />
     <Project Path="tests/Shanquan.Inventory.Domain.Tests/Shanquan.Inventory.Domain.Tests.csproj" />
     <Project Path="tests/Shanquan.Inventory.IntegrationTests/Shanquan.Inventory.IntegrationTests.csproj" />
   </Folder>

@@ -10,6 +10,61 @@ namespace Shanquan.Inventory.IntegrationTests;
 public sealed class CoreBusinessFlowTests
 {
     [Fact]
+    public async Task Workspace_SalesStatisticsIncludeOrdersBeyondRecentOrderLimit()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+        var options = new DbContextOptionsBuilder<InventoryDbContext>().UseSqlite(connection).Options;
+        await using (var setup = new InventoryDbContext(options))
+        {
+            await setup.Database.EnsureCreatedAsync();
+            var customerId = Guid.NewGuid();
+            var warehouseId = Guid.NewGuid();
+            setup.Customers.Add(new CustomerEntity { Id = customerId, Code = "C001", Name = "统计客户" });
+            setup.Warehouses.Add(new WarehouseEntity { Id = warehouseId, Code = "W001", Name = "主仓" });
+            for (var index = 0; index < 101; index++)
+            {
+                setup.SalesOrders.Add(new SalesOrderEntity
+                {
+                    Id = Guid.NewGuid(),
+                    Number = $"SO202501{index:000}",
+                    CustomerId = customerId,
+                    WarehouseId = warehouseId,
+                    Status = "已签收",
+                    TotalQuantity = 2,
+                    TotalAmountCents = 12_300,
+                    DocumentDate = new DateTimeOffset(2025, 1, 15, 0, 0, 0, TimeSpan.Zero),
+                    CreatedAt = new DateTimeOffset(2025, 1, 15, 0, index % 60, 0, TimeSpan.Zero),
+                });
+            }
+            setup.SalesOrders.Add(new SalesOrderEntity
+            {
+                Id = Guid.NewGuid(),
+                Number = "SO202502001",
+                CustomerId = customerId,
+                WarehouseId = warehouseId,
+                Status = "已签收",
+                TotalQuantity = 3,
+                TotalAmountCents = 45_600,
+                DocumentDate = new DateTimeOffset(2025, 2, 10, 0, 0, 0, TimeSpan.Zero),
+                CreatedAt = new DateTimeOffset(2025, 2, 10, 0, 0, 0, TimeSpan.Zero),
+            });
+            await setup.SaveChangesAsync();
+        }
+
+        var service = new CoreBusinessService(new TestDbContextFactory(options));
+        var workspace = await service.GetWorkspaceAsync();
+
+        Assert.Equal(100, workspace.SalesOrders.Count);
+        var january = Assert.Single(workspace.SalesPeriodSummaries, x => x.Year == 2025 && x.Month == 1);
+        Assert.Equal(101, january.OrderCount);
+        Assert.Equal(202, january.Quantity);
+        Assert.Equal(1_242_300, january.AmountCents);
+        var february = Assert.Single(workspace.SalesPeriodSummaries, x => x.Year == 2025 && x.Month == 2);
+        Assert.Equal(45_600, february.AmountCents);
+    }
+
+    [Fact]
     public async Task CustomerManagement_CreatesUpdatesAndDisablesCustomer()
     {
         await using var connection = new SqliteConnection("Data Source=:memory:");
@@ -164,20 +219,24 @@ public sealed class CoreBusinessFlowTests
         var orderNumber = await service.CreateAndReserveSalesOrderAsync(new CreateSalesOrderRequest(
             customerId,
             warehouseId,
-            [new CreateSalesOrderLine(skuId, 6)]));
+            [new CreateSalesOrderLine(skuId, 6)],
+            DateTimeOffset.Now));
 
         await using (var afterOrder = new InventoryDbContext(options))
         {
             var order = await afterOrder.SalesOrders.SingleAsync();
             var balance = await afterOrder.StockBalances.SingleAsync();
             Assert.Equal(orderNumber, order.Number);
-            Assert.Equal("已锁库", order.Status);
+            Assert.Equal("待配货", order.Status);
             Assert.Equal(55_200, order.TotalAmountCents);
             Assert.Equal(20, balance.OnHand);
             Assert.Equal(6, balance.Reserved);
         }
 
-        var shipmentNumber = await service.ShipSalesOrderAsync((await service.GetWorkspaceAsync()).SalesOrders.Single().Id);
+        var salesOrderId = (await service.GetWorkspaceAsync()).SalesOrders.Single().Id;
+        await service.StartPickingAsync(salesOrderId);
+        await service.CompletePickingAsync(salesOrderId);
+        var shipmentNumber = await service.ShipSalesOrderAsync(salesOrderId);
 
         await using (var afterShipment = new InventoryDbContext(options))
         {
@@ -217,7 +276,7 @@ public sealed class CoreBusinessFlowTests
 
         var service = new CoreBusinessService(factory);
         await Assert.ThrowsAsync<DomainRuleException>(() => service.CreateAndReserveSalesOrderAsync(
-            new CreateSalesOrderRequest(customerId, warehouseId, [new CreateSalesOrderLine(skuId, 3)])));
+            new CreateSalesOrderRequest(customerId, warehouseId, [new CreateSalesOrderLine(skuId, 3)], DateTimeOffset.Now)));
 
         await using var verify = new InventoryDbContext(options);
         Assert.Empty(await verify.SalesOrders.ToListAsync());

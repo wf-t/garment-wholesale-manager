@@ -1,46 +1,42 @@
-# 架构说明
+# 架构基线
 
-## 平台与部署
+## 平台
 
-Garment Wholesale Manager 是使用 Avalonia 12.1 与 .NET 10 的离线桌面应用。Windows x64 与 macOS Apple 芯片由现有脚本构建；SQLite 仅放在本机磁盘，不启动本地 HTTP 服务。
+- UI：Avalonia 12.1，Windows/macOS 共用 XAML 和 ViewModel。
+- Runtime：.NET 10 LTS。
+- Windows：首发 `win-x64` 自包含包。
+- macOS：当前开发机直接运行，后期可发布 `osx-arm64` 和 `osx-x64`。
+- 数据库：本机 SQLite；不启动本地 HTTP 服务。
 
-## 分层与依赖
+平台专用代码只能放在 Infrastructure 的适配器中，包括打印机、文件选择器、安装包和系统权限。Domain 与 Application 禁止引用 Windows 或 macOS API。
+
+## 分层
 
 ```text
-Desktop         页面、ViewModel、交互、依赖注入入口
-Application     ICoreBusinessService、DTO、基础设施接口
-Domain          Money、StockBalance、SalesOrder 领域规则
-Infrastructure  EF Core、SQLite、业务服务实现、数据库初始化
+Desktop        Avalonia 页面、ViewModel、导航、交互
+Application    用例、DTO、端口、事务编排
+Domain         商品、价格、销售、库存、应收规则
+Infrastructure SQLite、文件、打印、备份、日志
 ```
 
-Desktop 引用 Application 和 Infrastructure，在启动入口注册服务；Infrastructure 引用 Application / Domain；Application 引用 Domain。Domain 不引用 UI 或基础设施。
+依赖方向：Desktop → Application；Infrastructure → Application/Domain；Application → Domain。Domain 不依赖其他项目。
 
-当前业务编排主要实现在 Infrastructure 的 `CoreBusinessService`，接口位于 Application。不要把目标架构中的职责误认为已完成的代码迁移。平台 API 应留在 UI 或基础设施边界内。
+## 数据不变量
 
-## 核心流程
+- 可用库存 = 实际库存 - 锁定库存。
+- 锁定库存不能小于 0，也不能超过实际库存。
+- 发货不能超过订单未发数量。
+- 退货不能超过原发货可退数量。
+- 库存流水合计必须等于库存余额。
+- 客户资金流水合计必须等于客户余额。
+- 金额一律按整数分保存。
 
-1. 销售审核校验仓库、SKU、可用库存及信用额度，并建立库存预占。
-2. 开始配货 → 完成配货 → 待发货 → 整单发货 → 确认签收。
-3. 发货事务同步写入发货单、库存余额、库存流水和待收金额对应的应收流水。
-4. 客户收款以负金额流水记录；应收展示按发生时间将收款抵扣最早欠款。
+## 首期模块
 
-UI / 持久化使用的中文状态与 Domain 的 `SalesOrderStatus` 枚举并非一一映射。当前不支持按指定应收单自由选择核销。
+商品与价格、客户、供应商与采购、销售、配货发货、库存、应收收款、报表、系统管理。
 
-## 数据规则
+当前已完成的可操作闭环包括：客户档案、商品款号与 SKU、采购到货入库、盘点调整、销售草稿、按仓库选择颜色尺码、销售审核锁库、整单发货、库存流水，以及按收款状态生成发货应收。供应商采购单、拆单发货、收款核销、退换货和报表仍属于后续迭代。
 
-- 可用库存 = 实际库存 − 锁定库存；锁定量不得小于零或大于实际库存。
-- 发货扣减实际库存并释放相应预占；当前业务流程为整单发货。
-- 金额按整数分保存；应收余额由正负金额流水汇总。
-- 业务服务通过 EF Core 访问 SQLite；销售创建与发货等流程使用显式事务。
+## 演进边界
 
-## 数据初始化与目录
-
-`AppPaths` 解析系统 `LocalApplicationData`，在 `ShanquanInventory` 下建立 `data`、`backups`、`logs` 目录，数据库为 `data/main.db`。目录创建不等于已实现自动备份或文件日志功能。
-
-`DatabaseInitializer` 调用 `EnsureCreatedAsync` 和兼容性 SQL，启用 WAL、外键与 FULL 同步。升级前必须备份。源码保留演示数据方法，但当前初始化入口未调用它，不能承诺首启自动填充演示数据。
-
-## 已实现与规划
-
-已实现功能见 [README](../README.md)。供应商采购单、拆单发货、退换货、完整报表与自动备份尚需完善。
-
-未来多终端部署需要通过应用服务访问服务端数据库，不能直接共享 SQLite 文件。
+首期假设单台电脑。未来多台终端同时操作时，保留 Domain/Application，把 SQLite Infrastructure 替换为局域网应用服务和 PostgreSQL/SQL Server。禁止多台电脑直接共享同一个 SQLite 文件。

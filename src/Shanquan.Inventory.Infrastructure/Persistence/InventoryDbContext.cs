@@ -84,11 +84,8 @@ public sealed class InventoryDbContext(DbContextOptions<InventoryDbContext> opti
             entity.Property(x => x.OnHand).HasColumnName("on_hand");
             entity.Property(x => x.Reserved).HasColumnName("reserved");
             entity.Property(x => x.Version).IsConcurrencyToken();
-            entity.ToTable(table =>
-            {
-                table.HasCheckConstraint("ck_stock_on_hand_nonnegative", "on_hand >= 0");
-                table.HasCheckConstraint("ck_stock_reserved_valid", "reserved >= 0 AND reserved <= on_hand");
-            });
+            entity.HasCheckConstraint("ck_stock_on_hand_nonnegative", "on_hand >= 0");
+            entity.HasCheckConstraint("ck_stock_reserved_valid", "reserved >= 0 AND reserved <= on_hand");
         });
 
         modelBuilder.Entity<SalesOrderEntity>(entity =>

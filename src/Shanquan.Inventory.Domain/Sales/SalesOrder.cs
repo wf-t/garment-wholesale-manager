@@ -25,7 +25,7 @@ public sealed class SalesOrder
     {
         if (customerId == Guid.Empty) throw new ArgumentException("客户不能为空。", nameof(customerId));
         if (warehouseId == Guid.Empty) throw new ArgumentException("仓库不能为空。", nameof(warehouseId));
-        Id = Guid.CreateVersion7();
+        Id = Guid.NewGuid();
         CustomerId = customerId;
         WarehouseId = warehouseId;
     }

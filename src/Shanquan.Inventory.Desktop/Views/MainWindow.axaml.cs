@@ -129,7 +129,7 @@ public partial class MainWindow : Window
         RefreshSalesCustomerResults(viewModel, SalesCustomerSearchInput.Text, SalesCustomerSearchInput.IsFocused);
     }
 
-    private void SalesCustomerSearchInput_GotFocus(object? sender, RoutedEventArgs e)
+    private void SalesCustomerSearchInput_GotFocus(object? sender, GotFocusEventArgs e)
     {
         if (DataContext is not MainViewModel viewModel) return;
         SalesProductSearchPanel.IsVisible = false;
@@ -200,7 +200,7 @@ public partial class MainWindow : Window
         RefreshSalesProductResults(viewModel, SalesProductSearchInput.Text, SalesProductSearchInput.IsFocused);
     }
 
-    private void SalesProductSearchInput_GotFocus(object? sender, RoutedEventArgs e)
+    private void SalesProductSearchInput_GotFocus(object? sender, GotFocusEventArgs e)
     {
         if (DataContext is not MainViewModel viewModel) return;
         SalesCustomerSearchPanel.IsVisible = false;

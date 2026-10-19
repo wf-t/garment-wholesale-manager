@@ -47,7 +47,7 @@ public partial class InventoryFormWindow : Window
         RefreshProductResults(viewModel, ProductSearchInput.Text, true);
     }
 
-    private void ProductSearchInput_GotFocus(object? sender, RoutedEventArgs e)
+    private void ProductSearchInput_GotFocus(object? sender, GotFocusEventArgs e)
     {
         if (!string.IsNullOrWhiteSpace(ProductSearchInput.Text) && DataContext is InventoryFormViewModel viewModel)
             RefreshProductResults(viewModel, ProductSearchInput.Text, true);
@@ -114,7 +114,7 @@ public partial class InventoryFormWindow : Window
         RefreshStockProductResults(viewModel, StockProductSearchInput.Text, true);
     }
 
-    private void StockProductSearchInput_GotFocus(object? sender, RoutedEventArgs e)
+    private void StockProductSearchInput_GotFocus(object? sender, GotFocusEventArgs e)
     {
         if (DataContext is InventoryFormViewModel viewModel)
             RefreshStockProductResults(viewModel, StockProductSearchInput.Text, true);

@@ -15,6 +15,10 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
   --configuration Release \
   --runtime win-x64 \
   --self-contained true \
-  --output "$PROJECT_DIR/releases/win-x64"
+  --output "$PROJECT_DIR/releases/win7-x64" \
+  -p:PublishSingleFile=false \
+  -p:PublishTrimmed=false \
+  -p:DebugType=none \
+  -p:DebugSymbols=false
 
-echo "Windows 发布文件位于 releases/win-x64。"
+echo "Windows 7 x64 发布文件位于 releases/win7-x64。"

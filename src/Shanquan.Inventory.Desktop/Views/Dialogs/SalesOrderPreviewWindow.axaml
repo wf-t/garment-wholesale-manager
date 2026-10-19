@@ -1,15 +1,101 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:compat="using:Shanquan.Inventory.Desktop.Compatibility"
         xmlns:services="using:Shanquan.Inventory.Desktop.Services"
         x:Class="Shanquan.Inventory.Desktop.Views.Dialogs.SalesOrderPreviewWindow"
         x:DataType="services:SalesOrderPreviewData"
-        Width="920" Height="680" MinWidth="760" MinHeight="560"
-        WindowStartupLocation="CenterOwner" Background="#F5F2EF"
+        Width="1180" Height="720" MinWidth="1040" MinHeight="600"
+        WindowStartupLocation="CenterOwner" Background="#F1EEEB"
         Title="销售单打印预览">
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="28">
-        <Grid ColumnDefinitions="*,Auto"><StackPanel><TextBlock Text="盛轩服饰" FontSize="22" FontWeight="Bold" Foreground="#2D2522" /><TextBlock Text="销售单打印预览" Foreground="#8F2F35" FontWeight="SemiBold" Margin="0,5,0,0" /></StackPanel><TextBlock Grid.Column="1" Text="{Binding DraftNumber}" Foreground="#817773" VerticalAlignment="Center" /></Grid>
-        <Border Grid.Row="1" Background="White" BorderBrush="#E8E0DB" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,18,0,14"><Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto" RowSpacing="8"><TextBlock Text="{Binding CustomerLabel}" /><TextBlock Grid.Column="1" Text="{Binding WarehouseLabel}" /><TextBlock Grid.Column="2" Text="{Binding DocumentDateLabel}" /><TextBlock Grid.Column="3" Text="{Binding PaymentStatusLabel}" /><TextBlock Grid.Row="1" Text="{Binding GoodsAmountLabel}" /><TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding FreightLabel}" /><TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding DiscountLabel}" /><TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding PayableAmountLabel}" Foreground="#9D3037" FontWeight="Bold" /></Grid></Border>
-        <Border Grid.Row="2" Background="White" BorderBrush="#E8E0DB" BorderThickness="1" CornerRadius="12" ClipToBounds="True"><Grid RowDefinitions="42,*"><Border Background="#F8F4F1" Padding="14,0"><Grid ColumnDefinitions="100,1.5*,90,70,70,90,100"><TextBlock Text="款号" VerticalAlignment="Center" /><TextBlock Grid.Column="1" Text="商品" VerticalAlignment="Center" /><TextBlock Grid.Column="2" Text="颜色" VerticalAlignment="Center" /><TextBlock Grid.Column="3" Text="尺码" VerticalAlignment="Center" /><TextBlock Grid.Column="4" Text="数量" VerticalAlignment="Center" TextAlignment="Right" /><TextBlock Grid.Column="5" Text="单价" VerticalAlignment="Center" TextAlignment="Right" /><TextBlock Grid.Column="6" Text="金额" VerticalAlignment="Center" TextAlignment="Right" /></Grid></Border><ListBox Grid.Row="1" ItemsSource="{Binding Lines}" BorderThickness="0" Background="Transparent"><ListBox.ItemTemplate><DataTemplate x:DataType="services:SalesOrderPreviewLine"><Border BorderBrush="#EEE8E4" BorderThickness="0,0,0,1" Padding="14,11"><Grid ColumnDefinitions="100,1.5*,90,70,70,90,100"><TextBlock Text="{Binding StyleNumber}" /><TextBlock Grid.Column="1" Text="{Binding ProductName}" /><TextBlock Grid.Column="2" Text="{Binding Color}" /><TextBlock Grid.Column="3" Text="{Binding Size}" /><TextBlock Grid.Column="4" Text="{Binding Quantity}" TextAlignment="Right" /><TextBlock Grid.Column="5" Text="{Binding UnitPrice}" TextAlignment="Right" /><TextBlock Grid.Column="6" Text="{Binding Amount}" TextAlignment="Right" FontWeight="SemiBold" /></Grid></Border></DataTemplate></ListBox.ItemTemplate></ListBox></Grid></Border>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,16,0,0"><Button Content="关闭" Click="Close_Click" Padding="18,9" /><Button Content="导出打印文本" Click="Export_Click" Background="#8F2F35" Foreground="White" BorderThickness="0" CornerRadius="8" Padding="18,9" /></StackPanel>
-    </Grid>
+
+    <Window.Styles>
+        <Style Selector="Border.printCell">
+            <Setter Property="BorderBrush" Value="#5E5855" />
+            <Setter Property="BorderThickness" Value="0,0,1,1" />
+            <Setter Property="Padding" Value="5,8" />
+        </Style>
+        <Style Selector="TextBlock.printText">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="#171412" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.printHeader">
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="Foreground" Value="#171412" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.previewAction">
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Padding" Value="20,9" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+    </Window.Styles>
+
+    <compat:SpacingGrid RowDefinitions="*,Auto" Margin="28">
+        <Border Background="White" BorderBrush="#DDD5CF" BorderThickness="1" CornerRadius="4" Padding="34,28" BoxShadow="0 8 24 0 #16000000">
+            <compat:SpacingGrid RowDefinitions="Auto,Auto,*,Auto">
+                <TextBlock Text="{Binding Title}" FontSize="25" FontWeight="Bold" Foreground="#171412" HorizontalAlignment="Center" />
+
+                <compat:SpacingGrid Grid.Row="1" ColumnDefinitions="1.05*,1.15*,1.1*,1.05*" ColumnSpacing="18" Margin="0,22,0,14">
+                    <TextBlock Text="{Binding TicketNumberLabel}" FontSize="11" Foreground="#282321" />
+                    <TextBlock Grid.Column="1" Text="{Binding DocumentDateLabel}" FontSize="11" Foreground="#282321" />
+                    <TextBlock Grid.Column="2" Text="{Binding CustomerLabel}" FontSize="11" Foreground="#282321" />
+                    <TextBlock Grid.Column="3" Text="{Binding PhoneLabel}" FontSize="11" Foreground="#282321" />
+                </compat:SpacingGrid>
+
+                <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Border BorderBrush="#5E5855" BorderThickness="1,1,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Background="#F4F1EF">
+                                <Border Classes="printCell" Width="44"><TextBlock Classes="printHeader" Text="序号" /></Border>
+                                <Border Classes="printCell" Width="92"><TextBlock Classes="printHeader" Text="货号" /></Border>
+                                <Border Classes="printCell" Width="68"><TextBlock Classes="printHeader" Text="颜色" /></Border>
+                                <ItemsControl ItemsSource="{Binding SizeHeaders}">
+                                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate><DataTemplate x:DataType="x:String"><Border Classes="printCell" Width="40"><TextBlock Classes="printHeader" Text="{Binding}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Border Classes="printCell" Width="60"><TextBlock Classes="printHeader" Text="数量" /></Border>
+                                <Border Classes="printCell" Width="78"><TextBlock Classes="printHeader" Text="单价" /></Border>
+                                <Border Classes="printCell" Width="96"><TextBlock Classes="printHeader" Text="金额" /></Border>
+                            </StackPanel>
+
+                            <ItemsControl ItemsSource="{Binding Lines}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="services:SalesOrderPreviewLine">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Classes="printCell" Width="44"><TextBlock Classes="printText" Text="{Binding Sequence}" /></Border>
+                                            <Border Classes="printCell" Width="92"><TextBlock Classes="printText" Text="{Binding StyleNumber}" /></Border>
+                                            <Border Classes="printCell" Width="68"><TextBlock Classes="printText" Text="{Binding Color}" /></Border>
+                                            <ItemsControl ItemsSource="{Binding Sizes}">
+                                                <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate><DataTemplate x:DataType="services:SalesOrderPreviewSizeCell"><Border Classes="printCell" Width="40"><TextBlock Classes="printText" Text="{Binding Quantity}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                            <Border Classes="printCell" Width="60"><TextBlock Classes="printText" Text="{Binding Quantity}" FontWeight="SemiBold" /></Border>
+                                            <Border Classes="printCell" Width="78"><TextBlock Classes="printText" Text="{Binding UnitPrice}" TextAlignment="Right" /></Border>
+                                            <Border Classes="printCell" Width="96"><TextBlock Classes="printText" Text="{Binding Amount}" TextAlignment="Right" FontWeight="SemiBold" /></Border>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </ScrollViewer>
+
+                <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0" Spacing="10">
+                    <TextBlock Text="总计：" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding TotalAmount}" FontSize="14" FontWeight="Bold" Foreground="#171412" TextAlignment="Right" VerticalAlignment="Center" />
+                </StackPanel>
+            </compat:SpacingGrid>
+        </Border>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,16,0,0">
+            <TextBlock x:Name="PrintHint" VerticalAlignment="Center" Foreground="#746B67" FontSize="11" />
+            <Button Classes="previewAction" Content="关闭" Click="Close_Click" Background="White" Foreground="#4A403C" BorderBrush="#D5CCC6" BorderThickness="1" />
+            <Button Classes="previewAction" Content="打印" Click="Print_Click" Background="#8F2F35" Foreground="White" BorderThickness="0" />
+        </StackPanel>
+    </compat:SpacingGrid>
 </Window>

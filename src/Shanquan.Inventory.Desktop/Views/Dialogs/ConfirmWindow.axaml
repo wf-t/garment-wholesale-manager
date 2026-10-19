@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:compat="using:Shanquan.Inventory.Desktop.Compatibility"
         x:Class="Shanquan.Inventory.Desktop.Views.Dialogs.ConfirmWindow"
         Width="480"
         Height="260"
@@ -7,7 +8,7 @@
         WindowStartupLocation="CenterOwner"
         Background="#F8F7F6"
         Title="确认操作">
-    <Grid RowDefinitions="*,Auto" Margin="26">
+    <compat:SpacingGrid RowDefinitions="*,Auto" Margin="26">
         <StackPanel Spacing="14" VerticalAlignment="Center">
             <Border Width="46" Height="46" CornerRadius="23" Background="#FCE4E6" HorizontalAlignment="Left">
                 <TextBlock Text="!" Foreground="#9D3037" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -29,9 +30,9 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" Margin="0,18,0,0">
+        <compat:SpacingGrid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" Margin="0,18,0,0" ColumnSpacing="10">
             <Button Grid.Column="1" Background="White" BorderBrush="#DDD6D2" BorderThickness="1" CornerRadius="8" Padding="18,8" Click="Cancel_Click">取消</Button>
             <Button x:Name="ConfirmButton" Grid.Column="2" Background="#9D3037" Foreground="White" BorderThickness="0" CornerRadius="8" Padding="18,8" Click="Confirm_Click">确认</Button>
-        </Grid>
-    </Grid>
+        </compat:SpacingGrid>
+    </compat:SpacingGrid>
 </Window>

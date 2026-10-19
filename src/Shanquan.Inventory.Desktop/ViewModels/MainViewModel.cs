@@ -28,6 +28,7 @@ public sealed partial class MainViewModel : ViewModelBase
     }
 
     public ObservableCollection<MetricCard> Metrics { get; } = [];
+    public ObservableCollection<int> SalesStatisticsYears { get; } = [];
     public ObservableCollection<RecentOrder> RecentOrders { get; } = [];
     public ObservableCollection<TopSellingProduct> TopSellingProducts { get; } = [];
     public ObservableCollection<TaskItem> Tasks { get; } = [];
@@ -65,6 +66,9 @@ public sealed partial class MainViewModel : ViewModelBase
     public IReadOnlyList<string> CustomerStatusFilters { get; } = ["全部客户", "正常客户", "有欠款", "已停用"];
     public IReadOnlyList<string> PaymentStatuses { get; } = ["未收款", "已收款"];
     public IReadOnlyList<string> ShippingStatusFilters { get; } = ["全部", "待配货", "配货中", "待发货", "已发货", "已签收"];
+    public IReadOnlyList<int> SalesStatisticsMonths { get; } = Enumerable.Range(1, 12).ToArray();
+
+    private IReadOnlyList<SalesPeriodSummary> _salesPeriodSummaries = [];
 
     [ObservableProperty]
     private string _selectedSection = "经营首页";
@@ -129,6 +133,9 @@ public sealed partial class MainViewModel : ViewModelBase
     [ObservableProperty] private string _selectedInventoryCategoryFilter = "全部品类";
     [ObservableProperty] private string _selectedInventorySeasonFilter = "全部季节";
     [ObservableProperty] private InventorySummaryRow? _selectedInventorySummaryRow;
+    [ObservableProperty] private string _selectedSalesStatisticsPeriod = "按月";
+    [ObservableProperty] private int _selectedSalesStatisticsYear = DateTime.Today.Year;
+    [ObservableProperty] private int _selectedSalesStatisticsMonth = DateTime.Today.Month;
 
     public bool IsDashboard => SelectedSection == "经营首页";
     public bool IsSales => SelectedSection == "销售开单";
@@ -181,6 +188,30 @@ public sealed partial class MainViewModel : ViewModelBase
         _ => "晚上好，看看今天还有哪些事情待处理",
     };
     public string DashboardTaskCount => Tasks.Count.ToString();
+    public bool IsMonthlySalesStatistics => SelectedSalesStatisticsPeriod == "按月";
+    public bool IsYearlySalesStatistics => SelectedSalesStatisticsPeriod == "按年";
+    public string SalesStatisticsPeriodText => IsMonthlySalesStatistics
+        ? $"{SelectedSalesStatisticsYear}年{SelectedSalesStatisticsMonth}月"
+        : $"{SelectedSalesStatisticsYear}年全年";
+    public string SalesStatisticsAmountText
+    {
+        get
+        {
+            var summaries = SelectedSalesStatisticsSummaries;
+            return MoneyText.Format(summaries.Sum(x => x.AmountCents));
+        }
+    }
+    public string SalesStatisticsDetailText
+    {
+        get
+        {
+            var summaries = SelectedSalesStatisticsSummaries;
+            return $"共 {summaries.Sum(x => x.Quantity):N0} 件 · {summaries.Sum(x => x.OrderCount):N0} 笔销售单";
+        }
+    }
+    private IEnumerable<SalesPeriodSummary> SelectedSalesStatisticsSummaries => _salesPeriodSummaries.Where(x =>
+        x.Year == SelectedSalesStatisticsYear &&
+        (!IsMonthlySalesStatistics || x.Month == SelectedSalesStatisticsMonth));
     public string SalesOrderNumberText => $"草稿 {(SelectedSalesOrderDate ?? DateTime.Today):yyyyMMdd}";
     public string SalesOrderDraftText => "正式单号将在审核时生成 · 草稿可保存在本机";
     public string SalesOrderDateText => (SelectedSalesOrderDate ?? DateTime.Today).ToString("yyyy/MM/dd");
@@ -332,12 +363,25 @@ public sealed partial class MainViewModel : ViewModelBase
         SelectedManagedProduct = Products.FirstOrDefault(x => x.StyleNumber == value.StyleNumber) ?? SelectedManagedProduct;
     }
 
+    partial void OnSelectedSalesStatisticsPeriodChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsMonthlySalesStatistics));
+        OnPropertyChanged(nameof(IsYearlySalesStatistics));
+        NotifySalesStatisticsChanged();
+    }
+
+    partial void OnSelectedSalesStatisticsYearChanged(int value) => NotifySalesStatisticsChanged();
+    partial void OnSelectedSalesStatisticsMonthChanged(int value) => NotifySalesStatisticsChanged();
+
     [RelayCommand]
     private void SelectSection(string section)
     {
         SelectedSection = section;
         NotifySectionChanged();
     }
+
+    [RelayCommand]
+    private void SelectSalesStatisticsPeriod(string period) => SelectedSalesStatisticsPeriod = period;
 
     [RelayCommand]
     private void CreateSalesOrder()
@@ -737,28 +781,42 @@ public sealed partial class MainViewModel : ViewModelBase
             if (SelectedCustomer is null) throw new InvalidOperationException("请选择客户。");
             if (SelectedWarehouse is null) throw new InvalidOperationException("请选择发货仓库。");
             var lineLookup = lines.ToDictionary(x => x.SkuId);
-            var previewLines = SalesEntryRows
-                .SelectMany(row => row.SizeEntries
-                    .Where(cell => lineLookup.ContainsKey(cell.SkuId))
-                    .Select(cell => new SalesOrderPreviewLine(
-                        row.StyleNumber,
-                        row.ProductName,
-                        row.SelectedColor,
-                        cell.SizeCode,
-                        cell.Quantity.ToString("N0"),
-                        MoneyText.Format(row.UnitPriceCents),
-                        MoneyText.Format(checked(cell.Quantity * row.UnitPriceCents)))))
+            var previewRows = SalesEntryRows
+                .Select(row => new
+                {
+                    Row = row,
+                    Quantities = row.SizeEntries
+                        .Where(cell => lineLookup.ContainsKey(cell.SkuId))
+                        .GroupBy(cell => cell.SizeCode)
+                        .ToDictionary(x => x.Key, x => x.Sum(cell => cell.Quantity)),
+                })
+                .Where(x => x.Quantities.Count > 0)
                 .ToList();
+            var sizeHeaders = Enumerable.Range(26, 12).Select(x => x.ToString()).ToList();
+            var previewLines = previewRows
+                .Select((x, index) =>
+                {
+                    var totalQuantity = x.Quantities.Values.Sum();
+                    return new SalesOrderPreviewLine(
+                        index + 1,
+                        x.Row.StyleNumber,
+                        x.Row.SelectedColor,
+                        sizeHeaders.Select(size => new SalesOrderPreviewSizeCell(
+                            size,
+                            x.Quantities.TryGetValue(size, out var quantity) ? quantity.ToString("N0") : "")).ToList(),
+                        totalQuantity.ToString("N0"),
+                        MoneyText.Format(x.Row.UnitPriceCents),
+                        MoneyText.Format(checked(totalQuantity * x.Row.UnitPriceCents)));
+                })
+                .ToList();
+            var documentDate = SelectedSalesOrderDate ?? DateTime.Today;
             await _dialogService.ShowSalesOrderPreviewAsync(new SalesOrderPreviewData(
                 SalesOrderNumberText,
+                $"{documentDate:yyyy-MM-dd} {DateTime.Now:HH:mm}",
                 SelectedCustomer.Name,
-                SelectedWarehouse.Name,
-                SalesOrderDateText,
-                SelectedPaymentStatus,
-                CartAmountText,
-                FreightAmountText,
-                DiscountAmountText,
+                SelectedCustomer.Phone,
                 PayableAmountText,
+                sizeHeaders,
                 previewLines));
         }
         catch (Exception exception) { OperationMessage = exception.Message; }
@@ -1171,6 +1229,7 @@ public sealed partial class MainViewModel : ViewModelBase
             Replace(StockMovements, workspace.StockMovements);
             Replace(Receivables, workspace.Receivables);
             Replace(OpenReceivables, workspace.OpenReceivables);
+            RefreshSalesStatistics(workspace.SalesPeriodSummaries);
             Replace(ReceivableCustomers, workspace.Customers
                 .Where(x => x.ReceivableCents > 0)
                 .OrderByDescending(x => x.ReceivableCents)
@@ -1263,6 +1322,23 @@ public sealed partial class MainViewModel : ViewModelBase
             tasks.Add(new TaskItem("款", $"{dueSoon.Select(x => x.CustomerId).Distinct().Count()} 位客户 7 天内到期", MoneyText.Format(dueSoon.Sum(x => x.OutstandingCents)), "应收账款"));
         Replace(Tasks, tasks);
         OnPropertyChanged(nameof(DashboardTaskCount));
+    }
+
+    private void RefreshSalesStatistics(IReadOnlyList<SalesPeriodSummary> summaries)
+    {
+        _salesPeriodSummaries = summaries;
+        var currentYear = DateTime.Today.Year;
+        var selectedYear = SelectedSalesStatisticsYear;
+        Replace(SalesStatisticsYears, summaries.Select(x => x.Year).Append(currentYear).Distinct().OrderByDescending(x => x));
+        SelectedSalesStatisticsYear = SalesStatisticsYears.Contains(selectedYear) ? selectedYear : currentYear;
+        NotifySalesStatisticsChanged();
+    }
+
+    private void NotifySalesStatisticsChanged()
+    {
+        OnPropertyChanged(nameof(SalesStatisticsPeriodText));
+        OnPropertyChanged(nameof(SalesStatisticsAmountText));
+        OnPropertyChanged(nameof(SalesStatisticsDetailText));
     }
 
     private void FilterShippingOrders()

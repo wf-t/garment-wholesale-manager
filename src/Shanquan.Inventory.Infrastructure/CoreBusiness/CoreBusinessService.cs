@@ -174,6 +174,17 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
             entry.PaymentMethod ?? "",
             entry.Note ?? "")).ToList();
         var openReceivableItems = BuildOpenReceivables(receivables, customerById);
+        var salesPeriodSummaries = allOrders
+            .GroupBy(x => new { x.DocumentDate.LocalDateTime.Year, x.DocumentDate.LocalDateTime.Month })
+            .Select(x => new SalesPeriodSummary(
+                x.Key.Year,
+                x.Key.Month,
+                x.Sum(y => y.TotalAmountCents),
+                x.Sum(y => y.TotalQuantity),
+                x.Count()))
+            .OrderBy(x => x.Year)
+            .ThenBy(x => x.Month)
+            .ToList();
 
         var movementItems = movements
             .Where(x => skuById.ContainsKey(x.SkuId))
@@ -206,7 +217,8 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
             stockItems,
             movementItems,
             receivableItems,
-            openReceivableItems);
+            openReceivableItems,
+            salesPeriodSummaries);
     }
 
     public async Task<Guid> SaveCustomerAsync(
@@ -234,7 +246,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         {
             customer = new Persistence.CustomerEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 Code = code,
                 Name = name,
                 CreatedAt = DateTimeOffset.UtcNow,
@@ -290,7 +302,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         {
             product = new Persistence.ProductEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 StyleNumber = styleNumber,
                 Name = name,
             };
@@ -339,7 +351,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         }
         else
         {
-            warehouse = new Persistence.WarehouseEntity { Id = Guid.CreateVersion7(), Code = code, Name = name };
+            warehouse = new Persistence.WarehouseEntity { Id = Guid.NewGuid(), Code = code, Name = name };
             db.Warehouses.Add(warehouse);
         }
 
@@ -371,7 +383,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         var existing = (await db.Categories.ToListAsync(cancellationToken))
             .SingleOrDefault(x => string.Equals(x.Name, category, StringComparison.OrdinalIgnoreCase));
         if (existing is null)
-            db.Categories.Add(new Persistence.CategoryEntity { Id = Guid.CreateVersion7(), Name = category });
+            db.Categories.Add(new Persistence.CategoryEntity { Id = Guid.NewGuid(), Name = category });
         else
             existing.IsActive = true;
         await db.SaveChangesAsync(cancellationToken);
@@ -388,7 +400,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
 
         await using var db = await contextFactory.CreateDbContextAsync(cancellationToken);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
-        var categories = await db.Categories.AsNoTracking().ToListAsync(cancellationToken);
+        var categories = await db.Categories.ToListAsync(cancellationToken);
         var category = categories.SingleOrDefault(x => string.Equals(x.Name, currentName, StringComparison.OrdinalIgnoreCase))
             ?? throw new DomainRuleException("品类不存在。");
         if (categories.Any(x => !string.Equals(x.Name, currentName, StringComparison.OrdinalIgnoreCase)
@@ -396,13 +408,12 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
             throw new DomainRuleException($"品类“{newName}”已存在。");
         if (category.Name == newName) return;
 
-        await db.Products
+        var products = await db.Products
             .Where(x => x.Category == category.Name)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Category, newName), cancellationToken);
-        var updated = await db.Categories
-            .Where(x => x.Name == category.Name)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Name, newName), cancellationToken);
-        if (updated == 0) throw new DomainRuleException("品类不存在或已被删除。");
+            .ToListAsync(cancellationToken);
+        foreach (var product in products) product.Category = newName;
+        category.Name = newName;
+        await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
     }
 
@@ -423,32 +434,31 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         category = category.Trim();
         await using var db = await contextFactory.CreateDbContextAsync(cancellationToken);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
-        var productIds = await db.Products
+        var products = await db.Products
             .Where(x => x.Category == category)
-            .Select(x => x.Id)
             .ToListAsync(cancellationToken);
-        var skuIds = await db.Skus
+        var productIds = products.Select(x => x.Id).ToList();
+        var skus = await db.Skus
             .Where(x => productIds.Contains(x.ProductId))
-            .Select(x => x.Id)
             .ToListAsync(cancellationToken);
+        var skuIds = skus.Select(x => x.Id).ToList();
 
         if (skuIds.Count > 0 && await db.SalesOrderLines.AnyAsync(x => skuIds.Contains(x.SkuId), cancellationToken))
             throw new DomainRuleException("该品类下的商品已经产生销售单，不能删除。");
 
         if (skuIds.Count > 0)
         {
-            await db.StockMovements.Where(x => skuIds.Contains(x.SkuId)).ExecuteDeleteAsync(cancellationToken);
-            await db.StockBalances.Where(x => skuIds.Contains(x.SkuId)).ExecuteDeleteAsync(cancellationToken);
-            await db.Skus.Where(x => skuIds.Contains(x.Id)).ExecuteDeleteAsync(cancellationToken);
+            var movements = await db.StockMovements.Where(x => skuIds.Contains(x.SkuId)).ToListAsync(cancellationToken);
+            var balances = await db.StockBalances.Where(x => skuIds.Contains(x.SkuId)).ToListAsync(cancellationToken);
+            db.StockMovements.RemoveRange(movements);
+            db.StockBalances.RemoveRange(balances);
+            db.Skus.RemoveRange(skus);
         }
-        if (productIds.Count > 0)
-        {
-            await db.Products.Where(x => productIds.Contains(x.Id)).ExecuteDeleteAsync(cancellationToken);
-        }
-        var deleted = await db.Categories
-            .Where(x => x.Name == category)
-            .ExecuteDeleteAsync(cancellationToken);
-        if (deleted == 0) throw new DomainRuleException("品类不存在或已被删除。");
+        db.Products.RemoveRange(products);
+        var categoryEntity = await db.Categories.SingleOrDefaultAsync(x => x.Name == category, cancellationToken)
+            ?? throw new DomainRuleException("品类不存在或已被删除。");
+        db.Categories.Remove(categoryEntity);
+        await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
     }
 
@@ -468,7 +478,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         var color = await db.Colors.SingleOrDefaultAsync(x => x.ChineseName == chineseName && x.EnglishName == englishName, cancellationToken);
         if (color is null)
         {
-            color = new Persistence.ColorEntity { Id = Guid.CreateVersion7(), ChineseName = chineseName, EnglishName = englishName, Hex = hex };
+            color = new Persistence.ColorEntity { Id = Guid.NewGuid(), ChineseName = chineseName, EnglishName = englishName, Hex = hex };
             db.Colors.Add(color);
         }
         else
@@ -508,7 +518,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         {
             color = new Persistence.ColorEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 ChineseName = name,
                 EnglishName = name,
                 Hex = "#F2F0EE",
@@ -553,7 +563,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         foreach (var category in existing)
             category.IsActive = normalized.Contains(category.Name, StringComparer.OrdinalIgnoreCase);
         foreach (var name in normalized.Where(name => existing.All(x => !string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase))))
-            db.Categories.Add(new Persistence.CategoryEntity { Id = Guid.CreateVersion7(), Name = name });
+            db.Categories.Add(new Persistence.CategoryEntity { Id = Guid.NewGuid(), Name = name });
         await db.SaveChangesAsync(cancellationToken);
     }
 
@@ -577,7 +587,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
 
         var sku = new Persistence.SkuEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             ProductId = request.ProductId,
             ColorCode = color,
             SizeCode = size,
@@ -590,7 +600,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
                 throw new DomainRuleException("仓库不存在或已停用。");
             db.StockBalances.Add(new Persistence.StockBalanceEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 WarehouseId = request.WarehouseId.Value,
                 SkuId = sku.Id,
             });
@@ -638,7 +648,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         {
             entity = new Persistence.StockBalanceEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 WarehouseId = request.WarehouseId,
                 SkuId = request.SkuId,
             };
@@ -652,7 +662,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         var number = CreateNumber("RK", DateTimeOffset.UtcNow);
         db.StockMovements.Add(new Persistence.StockMovementEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             WarehouseId = request.WarehouseId,
             SkuId = request.SkuId,
             MovementType = string.IsNullOrWhiteSpace(request.Note) ? "采购入库" : $"采购入库 · {request.Note.Trim()}",
@@ -691,7 +701,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         var number = CreateNumber("PD", DateTimeOffset.UtcNow);
         db.StockMovements.Add(new Persistence.StockMovementEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             WarehouseId = request.WarehouseId,
             SkuId = request.SkuId,
             MovementType = $"库存盘点 · {request.Reason.Trim()}",
@@ -758,7 +768,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         {
             draft = new Persistence.SalesDraftEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 CustomerId = request.CustomerId,
                 WarehouseId = request.WarehouseId,
                 PaymentStatus = request.PaymentStatus,
@@ -782,7 +792,9 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
     public async Task ClearSalesDraftAsync(CancellationToken cancellationToken = default)
     {
         await using var db = await contextFactory.CreateDbContextAsync(cancellationToken);
-        await db.SalesDrafts.ExecuteDeleteAsync(cancellationToken);
+        var drafts = await db.SalesDrafts.ToListAsync(cancellationToken);
+        db.SalesDrafts.RemoveRange(drafts);
+        await db.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<string> CreateAndReserveSalesOrderAsync(
@@ -833,7 +845,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         var number = CreateNumber("XS", now);
         var order = new Persistence.SalesOrderEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             Number = number,
             CustomerId = request.CustomerId,
             WarehouseId = request.WarehouseId,
@@ -865,7 +877,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
 
             db.SalesOrderLines.Add(new Persistence.SalesOrderLineEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 SalesOrderId = order.Id,
                 SkuId = requestedLine.SkuId,
                 Quantity = requestedLine.Quantity,
@@ -874,7 +886,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
             });
             db.StockMovements.Add(new Persistence.StockMovementEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 WarehouseId = request.WarehouseId,
                 SkuId = requestedLine.SkuId,
                 MovementType = "销售锁库",
@@ -967,7 +979,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         var shipmentNumber = CreateNumber("FH", now);
         var shipment = new Persistence.ShipmentEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             Number = shipmentNumber,
             SalesOrderId = order.Id,
             CustomerId = order.CustomerId,
@@ -993,7 +1005,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
 
             db.ShipmentLines.Add(new Persistence.ShipmentLineEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 ShipmentId = shipment.Id,
                 SalesOrderLineId = line.Id,
                 SkuId = line.SkuId,
@@ -1001,7 +1013,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
             });
             db.StockMovements.Add(new Persistence.StockMovementEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 WarehouseId = order.WarehouseId,
                 SkuId = line.SkuId,
                 MovementType = "销售发货",
@@ -1025,7 +1037,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
                 .SingleAsync(cancellationToken);
             db.ReceivableEntries.Add(new Persistence.ReceivableEntryEntity
             {
-                Id = Guid.CreateVersion7(),
+                Id = Guid.NewGuid(),
                 CustomerId = order.CustomerId,
                 EntryType = "销售应收",
                 AmountCents = receivableAmount,
@@ -1066,7 +1078,7 @@ public sealed class CoreBusinessService(IDbContextFactory<Persistence.InventoryD
         var number = CreateNumber("SK", request.ReceivedAt);
         db.ReceivableEntries.Add(new Persistence.ReceivableEntryEntity
         {
-            Id = Guid.CreateVersion7(),
+            Id = Guid.NewGuid(),
             CustomerId = request.CustomerId,
             EntryType = "收款",
             AmountCents = -request.AmountCents,
