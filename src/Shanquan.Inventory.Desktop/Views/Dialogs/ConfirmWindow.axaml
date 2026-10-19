@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Shanquan.Inventory.Desktop.Views.Dialogs.ConfirmWindow"
+        Width="480"
+        Height="260"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="#F8F7F6"
+        Title="确认操作">
+    <Grid RowDefinitions="*,Auto" Margin="26">
+        <StackPanel Spacing="14" VerticalAlignment="Center">
+            <Border Width="46" Height="46" CornerRadius="23" Background="#FCE4E6" HorizontalAlignment="Left">
+                <TextBlock Text="!" Foreground="#9D3037" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <TextBlock x:Name="TitleText" FontSize="20" FontWeight="Bold" />
+            <TextBlock x:Name="MessageText" TextWrapping="Wrap" Foreground="#6F6661" LineHeight="20" />
+            <Border x:Name="InputPanel" IsVisible="False" Background="White" BorderBrush="#E1D9D4" BorderThickness="1" CornerRadius="10" Padding="14,12">
+                <StackPanel Spacing="7">
+                    <TextBlock x:Name="InputLabelText" FontSize="10" FontWeight="SemiBold" Foreground="#443A36" />
+                    <TextBox x:Name="OptionalInputTextBox"
+                             MaxLength="100"
+                             MinHeight="42"
+                             Background="#FBF9F7"
+                             BorderBrush="#DDD5CF"
+                             BorderThickness="1"
+                             CornerRadius="8"
+                             Padding="12,7" />
+                    <TextBlock Text="可留空，填写后将在发货记录中展示" FontSize="9" Foreground="#918783" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" Margin="0,18,0,0">
+            <Button Grid.Column="1" Background="White" BorderBrush="#DDD6D2" BorderThickness="1" CornerRadius="8" Padding="18,8" Click="Cancel_Click">取消</Button>
+            <Button x:Name="ConfirmButton" Grid.Column="2" Background="#9D3037" Foreground="White" BorderThickness="0" CornerRadius="8" Padding="18,8" Click="Confirm_Click">确认</Button>
+        </Grid>
+    </Grid>
+</Window>

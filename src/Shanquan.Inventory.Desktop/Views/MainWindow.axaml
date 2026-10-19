@@ -1,0 +1,441 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Shanquan.Inventory.Desktop.ViewModels"
+        xmlns:app="using:Shanquan.Inventory.Application.CoreBusiness"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignWidth="1600"
+        d:DesignHeight="900"
+        x:Class="Shanquan.Inventory.Desktop.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Width="1600"
+        Height="900"
+        MinWidth="1280"
+        MinHeight="760"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F2EF"
+        WindowDecorations="None"
+        Title="服装进销存批发管理">
+
+    <Window.Styles>
+        <Style Selector="Button"><Setter Property="Cursor" Value="Hand" /><Setter Property="MinHeight" Value="42" /><Setter Property="FontSize" Value="12" /></Style>
+        <Style Selector="Button.nav">
+            <Setter Property="Height" Value="50" /><Setter Property="Margin" Value="12,4" />
+            <Setter Property="Padding" Value="14,0" /><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="Transparent" /><Setter Property="Foreground" Value="#CFC4C0" />
+            <Setter Property="BorderBrush" Value="Transparent" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="12" />
+            <Setter Property="FontSize" Value="13" /><Setter Property="ClipToBounds" Value="True" />
+        </Style>
+        <Style Selector="Button.nav:pointerover"><Setter Property="Background" Value="#513437" /><Setter Property="Foreground" Value="#FFF9F7" /><Setter Property="BorderBrush" Value="#70474A" /></Style>
+        <Style Selector="Button.nav:pressed"><Setter Property="Background" Value="#5D373B" /><Setter Property="Foreground" Value="White" /></Style>
+        <Style Selector="Button.nav.active"><Setter Property="Background" Value="#9D3037" /><Setter Property="Foreground" Value="White" /><Setter Property="BorderBrush" Value="#B74A51" /><Setter Property="FontWeight" Value="SemiBold" /></Style>
+        <Style Selector="Button.nav.active:pointerover"><Setter Property="Background" Value="#AA383F" /><Setter Property="Foreground" Value="White" /><Setter Property="BorderBrush" Value="#C1575D" /></Style>
+        <Style Selector="Button.nav.active:pressed"><Setter Property="Background" Value="#8E2930" /><Setter Property="Foreground" Value="White" /></Style>
+        <Style Selector="Border.navIcon"><Setter Property="Width" Value="28" /><Setter Property="Height" Value="28" /><Setter Property="CornerRadius" Value="8" /><Setter Property="Background" Value="#0FFFFFFF" /></Style>
+        <Style Selector="Button.nav:pointerover Border.navIcon"><Setter Property="Background" Value="#18FFFFFF" /></Style>
+        <Style Selector="Button.nav.active Border.navIcon"><Setter Property="Background" Value="#24FFFFFF" /></Style>
+        <Style Selector="TextBlock.navIconText"><Setter Property="HorizontalAlignment" Value="Center" /><Setter Property="VerticalAlignment" Value="Center" /><Setter Property="TextAlignment" Value="Center" /></Style>
+        <Style Selector="TextBlock.navLabel"><Setter Property="VerticalAlignment" Value="Center" /><Setter Property="LineHeight" Value="18" /></Style>
+        <Style Selector="Button.shippingFilter"><Setter Property="MinHeight" Value="32" /><Setter Property="Padding" Value="16,6" /><Setter Property="Background" Value="Transparent" /><Setter Property="Foreground" Value="#786E69" /><Setter Property="BorderBrush" Value="Transparent" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="17" /><Setter Property="FontSize" Value="10" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="HorizontalContentAlignment" Value="Center" /><Setter Property="VerticalContentAlignment" Value="Center" /><Setter Property="ClipToBounds" Value="True" /></Style>
+        <Style Selector="Button.shippingFilter:pointerover"><Setter Property="Background" Value="#F7ECEC" /><Setter Property="Foreground" Value="#8F2F35" /><Setter Property="BorderBrush" Value="#EAD6D7" /></Style>
+        <Style Selector="Button.shippingFilter:pressed"><Setter Property="Background" Value="#F0DDDE" /><Setter Property="Foreground" Value="#7E272D" /><Setter Property="BorderBrush" Value="#DEBEC1" /></Style>
+        <Style Selector="Button.shippingFilter.active"><Setter Property="Background" Value="#F6E3E5" /><Setter Property="Foreground" Value="#9D3037" /><Setter Property="BorderBrush" Value="#E3C3C6" /></Style>
+        <Style Selector="Button.shippingFilter.active:pointerover"><Setter Property="Background" Value="#F1DADD" /><Setter Property="Foreground" Value="#8F2F35" /><Setter Property="BorderBrush" Value="#DDB9BD" /></Style>
+        <Style Selector="Button.windowButton"><Setter Property="Width" Value="52" /><Setter Property="Height" Value="56" /><Setter Property="MinHeight" Value="56" /><Setter Property="Background" Value="Transparent" /><Setter Property="Foreground" Value="#CFC5C1" /><Setter Property="BorderThickness" Value="0" /><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="0" /><Setter Property="FontSize" Value="17" /><Setter Property="FontWeight" Value="Medium" /><Setter Property="HorizontalContentAlignment" Value="Center" /><Setter Property="VerticalContentAlignment" Value="Center" /></Style>
+        <Style Selector="Button.windowButton:pointerover"><Setter Property="Background" Value="#382C2A" /><Setter Property="Foreground" Value="White" /></Style>
+        <Style Selector="Button.windowButton.close"><Setter Property="FontSize" Value="20" /></Style>
+        <Style Selector="Button.windowButton.close:pointerover"><Setter Property="Background" Value="#A9363C" /></Style>
+        <Style Selector="Border.maximizeGlyph"><Setter Property="BorderBrush" Value="#CFC5C1" /><Setter Property="BorderThickness" Value="1.5" /><Setter Property="CornerRadius" Value="1" /></Style>
+        <Style Selector="Button.windowButton:pointerover Border.maximizeGlyph"><Setter Property="BorderBrush" Value="White" /></Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#8F2F35" /><Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" /><Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="20,10" /><Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.primary:pointerover"><Setter Property="Background" Value="#6F1F25" /></Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="White" /><Setter Property="Foreground" Value="#4A403C" />
+            <Setter Property="BorderBrush" Value="#DDD4CE" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="10" /><Setter Property="Padding" Value="16,9" />
+        </Style>
+        <Style Selector="Button.secondary:pointerover"><Setter Property="Background" Value="#FBF7F4" /><Setter Property="BorderBrush" Value="#BCAEA6" /></Style>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#E8E0DB" />
+            <Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="14" /><Setter Property="Padding" Value="18" /><Setter Property="BoxShadow" Value="0 5 20 0 #10000000" />
+        </Style>
+        <Style Selector="Border.row"><Setter Property="BorderBrush" Value="#EEE8E4" /><Setter Property="BorderThickness" Value="0,0,0,1" /><Setter Property="Padding" Value="16,13" /></Style>
+        <Style Selector="TextBlock.muted"><Setter Property="Foreground" Value="#817773" /><Setter Property="FontSize" Value="11" /></Style>
+        <Style Selector="TextBlock.label"><Setter Property="Foreground" Value="#6F6661" /><Setter Property="FontSize" Value="11" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Margin" Value="2,0,0,7" /></Style>
+        <Style Selector="TextBlock.eyebrow"><Setter Property="Foreground" Value="#9D3037" /><Setter Property="FontSize" Value="11" /><Setter Property="FontWeight" Value="Bold" /></Style>
+        <Style Selector="TextBlock.pageTitle"><Setter Property="Foreground" Value="#26201E" /><Setter Property="FontSize" Value="28" /><Setter Property="FontWeight" Value="Bold" /><Setter Property="Margin" Value="0,9,0,5" /></Style>
+        <Style Selector="TextBlock.pageSubtitle"><Setter Property="Foreground" Value="#817773" /><Setter Property="FontSize" Value="11" /></Style>
+        <Style Selector="StackPanel.page"><Setter Property="Margin" Value="92,6,92,26" /><Setter Property="Spacing" Value="18" /></Style>
+        <Style Selector="TextBox">
+            <Setter Property="MinHeight" Value="44" /><Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Background" Value="#FBF9F7" /><Setter Property="BorderBrush" Value="#DDD5CF" />
+            <Setter Property="BorderThickness" Value="1" /><Setter Property="Padding" Value="13,8" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" /><Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="SelectionBrush" Value="#DAB8B9" />
+        </Style>
+        <Style Selector="TextBox:pointerover"><Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#C7BAB3" /></Style>
+        <Style Selector="TextBox:focus"><Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#8F2F35" /><Setter Property="BorderThickness" Value="1.5" /></Style>
+        <Style Selector="TextBox.numeric"><Setter Property="HorizontalContentAlignment" Value="Center" /><Setter Property="TextAlignment" Value="Center" /><Setter Property="FontWeight" Value="SemiBold" /></Style>
+        <Style Selector="TextBox.sizeQty"><Setter Property="Width" Value="44" /><Setter Property="Height" Value="34" /><Setter Property="MinHeight" Value="34" /><Setter Property="Padding" Value="5,4" /><Setter Property="HorizontalContentAlignment" Value="Center" /><Setter Property="TextAlignment" Value="Center" /><Setter Property="FontSize" Value="10" /></Style>
+        <Style Selector="TextBox.search"><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="0,8,12,8" /></Style>
+        <Style Selector="TextBox.search:focus"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /></Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinHeight" Value="44" /><Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Background" Value="#FBF9F7" /><Setter Property="BorderBrush" Value="#DDD5CF" />
+            <Setter Property="BorderThickness" Value="1" /><Setter Property="Padding" Value="12,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" /><Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="ComboBox:pointerover"><Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#C7BAB3" /></Style>
+        <Style Selector="ComboBox.colorPicker"><Setter Property="MinHeight" Value="36" /><Setter Property="Padding" Value="9,3" /><Setter Property="FontSize" Value="10" /></Style>
+        <Style Selector="CalendarDatePicker.dateField"><Setter Property="MinHeight" Value="44" /><Setter Property="Background" Value="#FBF9F7" /><Setter Property="BorderBrush" Value="#DDD5CF" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="10" /><Setter Property="Padding" Value="12,5" /><Setter Property="HorizontalContentAlignment" Value="Left" /><Setter Property="VerticalContentAlignment" Value="Center" /><Setter Property="SelectedDateFormat" Value="Custom" /><Setter Property="CustomDateFormatString" Value="yyyy/MM/dd" /></Style>
+        <Style Selector="CalendarDatePicker.dateField:pointerover"><Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#C7BAB3" /></Style>
+        <Style Selector="CalendarDatePicker.dateField:focus-within"><Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#8F2F35" /><Setter Property="BorderThickness" Value="1.5" /></Style>
+        <Style Selector="Border.searchShell"><Setter Property="Height" Value="44" /><Setter Property="Background" Value="#FBF9F7" /><Setter Property="BorderBrush" Value="#DDD5CF" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="10" /></Style>
+        <Style Selector="Border.toolbar"><Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#E8E0DB" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="14" /><Setter Property="Padding" Value="16" /><Setter Property="BoxShadow" Value="0 5 20 0 #10000000" /></Style>
+        <Style Selector="Border.metricCard"><Setter Property="Height" Value="110" /><Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#EBE4DF" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="14" /><Setter Property="BoxShadow" Value="0 5 18 0 #0D000000" /><Setter Property="Padding" Value="20,16" /></Style>
+        <Style Selector="ListBox.customerList > ListBoxItem"><Setter Property="Padding" Value="0" /><Setter Property="Margin" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="HorizontalContentAlignment" Value="Stretch" /></Style>
+        <Style Selector="ListBox.customerList > ListBoxItem:pointerover"><Setter Property="Background" Value="#FCF9F7" /></Style>
+        <Style Selector="ListBox.customerList > ListBoxItem:selected"><Setter Property="Background" Value="#FBF3F2" /></Style>
+        <Style Selector="ListBox.plainList > ListBoxItem"><Setter Property="Padding" Value="0" /><Setter Property="Margin" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="HorizontalContentAlignment" Value="Stretch" /></Style>
+        <Style Selector="ListBox.plainList > ListBoxItem:pointerover"><Setter Property="Background" Value="#FCF9F7" /></Style>
+        <Style Selector="ListBox.plainList > ListBoxItem:selected"><Setter Property="Background" Value="#FBF3F2" /></Style>
+        <Style Selector="Button.link"><Setter Property="Background" Value="Transparent" /><Setter Property="Foreground" Value="#9D3037" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Padding" Value="6,4" /><Setter Property="MinHeight" Value="28" /><Setter Property="FontWeight" Value="SemiBold" /></Style>
+        <Style Selector="Button.searchOption"><Setter Property="Background" Value="White" /><Setter Property="Foreground" Value="#332D2A" /><Setter Property="BorderThickness" Value="0" /><Setter Property="CornerRadius" Value="0" /><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="13,10" /></Style>
+        <Style Selector="Button.searchOption:pointerover"><Setter Property="Background" Value="#FFF3F4" /></Style>
+        <Style Selector="ItemsControl.searchResults > ContentPresenter"><Setter Property="HorizontalContentAlignment" Value="Stretch" /></Style>
+        <Style Selector="Border.sectionCard"><Setter Property="Background" Value="White" /><Setter Property="BorderBrush" Value="#E8E0DB" /><Setter Property="BorderThickness" Value="1" /><Setter Property="CornerRadius" Value="14" /><Setter Property="BoxShadow" Value="0 5 20 0 #10000000" /><Setter Property="ClipToBounds" Value="True" /></Style>
+        <Style Selector="Border.softHeader"><Setter Property="Background" Value="#F8F4F1" /><Setter Property="BorderBrush" Value="#EDE6E2" /><Setter Property="BorderThickness" Value="0,1,0,1" /></Style>
+        <Style Selector="Border.statusPill"><Setter Property="CornerRadius" Value="14" /><Setter Property="Padding" Value="14,5" /><Setter Property="HorizontalAlignment" Value="Center" /></Style>
+        <Style Selector="TextBlock.tableHeader"><Setter Property="Foreground" Value="#756B66" /><Setter Property="FontSize" Value="10" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="VerticalAlignment" Value="Center" /></Style>
+        <Style Selector="TextBlock.value"><Setter Property="Foreground" Value="#27211F" /><Setter Property="FontWeight" Value="Bold" /></Style>
+        <Style Selector="ProgressBar.aging"><Setter Property="Height" Value="5" /><Setter Property="Background" Value="#ECE6E2" /><Setter Property="Foreground" Value="#9D3037" /><Setter Property="CornerRadius" Value="3" /></Style>
+    </Window.Styles>
+
+    <Grid ColumnDefinitions="242,*" RowDefinitions="56,*">
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="#221A19" PointerPressed="TitleBar_PointerPressed">
+            <Grid ColumnDefinitions="242,*,Auto,Auto,Auto,Auto">
+                <StackPanel Orientation="Horizontal" Margin="19,0,0,0" Spacing="12" VerticalAlignment="Center">
+                    <Border Width="36" Height="36" CornerRadius="9" Background="#A33239"><TextBlock Text="盛" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="18" FontWeight="Bold" /></Border>
+                    <StackPanel VerticalAlignment="Center"><TextBlock Text="盛轩服饰" Foreground="White" FontWeight="SemiBold" FontSize="15" /><TextBlock Text="进销存管理系统 · 本地版" Foreground="#A99E9A" FontSize="9" Margin="0,2,0,0" /></StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,0,18,0"><Ellipse Width="8" Height="8" Fill="#55B986" /><TextBlock Text="本机数据正常" Foreground="#C2B8B4" FontSize="11" VerticalAlignment="Center" /></StackPanel>
+                <Button Grid.Column="3" Classes="windowButton" Click="Minimize_Click">—</Button>
+                <Button x:Name="MaximizeButton" Grid.Column="4" Classes="windowButton" Click="Maximize_Click" ToolTip.Tip="最大化或还原窗口">
+                    <Grid Width="18" Height="18">
+                        <Border x:Name="MaximizeSingleIcon" Classes="maximizeGlyph" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Grid x:Name="RestoreWindowIcon" Width="16" Height="16" IsVisible="False">
+                            <Border Classes="maximizeGlyph" Width="11" Height="11" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                            <Border Classes="maximizeGlyph" Width="11" Height="11" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                        </Grid>
+                    </Grid>
+                </Button>
+                <Button Grid.Column="5" Classes="windowButton close" Click="Close_Click">×</Button>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0" Background="#302321">
+            <Grid RowDefinitions="*,Auto,Auto">
+                <StackPanel Margin="0,25,0,0">
+                    <Button Classes="nav" Classes.active="{Binding IsDashboard}" Command="{Binding SelectSectionCommand}" CommandParameter="经营首页"><Grid ColumnDefinitions="28,*" ColumnSpacing="12" VerticalAlignment="Center"><Border Classes="navIcon"><TextBlock Classes="navIconText" Text="⌂" FontSize="16" /></Border><TextBlock Grid.Column="1" Classes="navLabel" Text="经营首页" /></Grid></Button>
+                    <Button Classes="nav" Classes.active="{Binding IsSales}" Command="{Binding SelectSectionCommand}" CommandParameter="销售开单"><Grid ColumnDefinitions="28,*" ColumnSpacing="12" VerticalAlignment="Center"><Border Classes="navIcon"><TextBlock Classes="navIconText" Text="＋" FontSize="18" /></Border><TextBlock Grid.Column="1" Classes="navLabel" Text="销售开单" /></Grid></Button>
+                    <Button Classes="nav" Classes.active="{Binding IsCustomers}" Command="{Binding SelectSectionCommand}" CommandParameter="客户管理"><Grid ColumnDefinitions="28,*" ColumnSpacing="12" VerticalAlignment="Center"><Border Classes="navIcon"><TextBlock Classes="navIconText" Text="人" FontSize="14" /></Border><TextBlock Grid.Column="1" Classes="navLabel" Text="客户管理" /></Grid></Button>
+                    <Button Classes="nav" Classes.active="{Binding IsStock}" Command="{Binding SelectSectionCommand}" CommandParameter="库存管理"><Grid ColumnDefinitions="28,*" ColumnSpacing="12" VerticalAlignment="Center"><Border Classes="navIcon"><TextBlock Classes="navIconText" Text="▦" FontSize="15" /></Border><TextBlock Grid.Column="1" Classes="navLabel" Text="库存管理" /></Grid></Button>
+                    <Button Classes="nav" Classes.active="{Binding IsShipping}" Command="{Binding SelectSectionCommand}" CommandParameter="配货发货"><Grid ColumnDefinitions="28,*,Auto" ColumnSpacing="12" VerticalAlignment="Center"><Border Classes="navIcon"><TextBlock Classes="navIconText" Text="→" FontSize="16" /></Border><TextBlock Grid.Column="1" Classes="navLabel" Text="配货发货" /><Border Grid.Column="2" IsVisible="{Binding HasPendingShipments}" Background="White" CornerRadius="10" MinWidth="20" Height="20" Padding="5,0"><TextBlock Text="{Binding PendingShipmentCount}" Foreground="#9D3037" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border></Grid></Button>
+                    <Button Classes="nav" Classes.active="{Binding IsReceivables}" Command="{Binding SelectSectionCommand}" CommandParameter="应收账款"><Grid ColumnDefinitions="28,*" ColumnSpacing="12" VerticalAlignment="Center"><Border Classes="navIcon"><TextBlock Classes="navIconText" Text="¥" FontSize="15" /></Border><TextBlock Grid.Column="1" Classes="navLabel" Text="应收账款" /></Grid></Button>
+                </StackPanel>
+                <Border Grid.Row="1" Margin="13,0,13,17" Padding="13,12" CornerRadius="10" Background="#413431"><Grid ColumnDefinitions="30,*" RowDefinitions="Auto,Auto"><Border Width="27" Height="27" CornerRadius="14" Background="#426350"><TextBlock Text="✓" Foreground="#78D39F" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><TextBlock Grid.Column="1" Text="本地数据已备份" Foreground="White" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Row="1" Grid.Column="1" Text="今天 08:30" Foreground="#9E928E" FontSize="9" Margin="0,4,0,0" /></Grid></Border>
+                <Grid Grid.Row="2" ColumnDefinitions="42,*,Auto" Margin="19,0,19,17"><Border Width="36" Height="36" CornerRadius="9" Background="#F8E9E9"><TextBlock Text="盛" Foreground="#9D3037" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="盛轩" Foreground="White" FontSize="11" FontWeight="SemiBold" /><TextBlock Text="管理员" Foreground="#998D89" FontSize="9" Margin="0,3,0,0" /></StackPanel><TextBlock Grid.Column="2" Text="•••" Foreground="#998D89" VerticalAlignment="Center" /></Grid>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+            <Grid Margin="26" MaxWidth="1450" HorizontalAlignment="Stretch">
+                <!-- 经营首页 -->
+                <StackPanel Classes="page" IsVisible="{Binding IsDashboard}" Margin="74,6,74,28">
+                    <Border CornerRadius="16" Padding="30,24" Background="#8F2F35">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="{Binding DashboardDateText}" Foreground="#E9C8C7" FontSize="11" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding DashboardGreetingText}" Foreground="White" FontSize="25" FontWeight="Bold" Margin="0,5,0,1" />
+                                <TextBlock Text="数据保存在本机，无网络也可以正常开单、查库存和打印。" Foreground="#EAD7D5" FontSize="11" />
+                            </StackPanel>
+                            <Border Grid.Column="1" BoxShadow="0 6 16 0 #30000000" CornerRadius="9" VerticalAlignment="Center"><Button Command="{Binding CreateSalesOrderCommand}" Background="White" Foreground="#8F2F35" BorderThickness="0" CornerRadius="9" Padding="20,11" FontWeight="SemiBold">＋ 新建销售单</Button></Border>
+                        </Grid>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding Metrics}">
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:MetricCard"><Border Classes="metricCard" Margin="0,0,12,0" Height="114"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="34" CornerRadius="2" Background="{Binding AccentBrush}" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="14,0,0,0"><TextBlock Text="{Binding Label}" Classes="muted" FontSize="11" /><TextBlock Text="{Binding Value}" FontSize="24" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="{Binding Detail}" Foreground="{Binding DetailBrush}" FontSize="10" /></StackPanel></Grid></Border></DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Grid ColumnDefinitions="1.12*,0.88*" ColumnSpacing="18">
+                        <Border Grid.Column="0" Classes="sectionCard"><StackPanel>
+                            <Grid Margin="18,15,18,13" ColumnDefinitions="*,Auto"><StackPanel><TextBlock Text="待办事项" Classes="eyebrow" /><TextBlock Text="今天需要处理" FontSize="16" FontWeight="SemiBold" Margin="0,7,0,0" /></StackPanel><Border Grid.Column="1" Width="28" Height="28" CornerRadius="14" Background="#FAE8E9"><TextBlock Text="{Binding DashboardTaskCount}" Foreground="#9D3037" FontWeight="Bold" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border></Grid>
+                            <ItemsControl ItemsSource="{Binding Tasks}"><ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:TaskItem"><Border Classes="row" Padding="18,12" Tag="{Binding}" PointerPressed="DashboardTask_PointerPressed" Cursor="Hand"><Grid ColumnDefinitions="40,*,Auto"><Border Width="32" Height="32" CornerRadius="9" Background="{Binding BackgroundBrush}"><TextBlock Text="{Binding Glyph}" Foreground="{Binding ForegroundBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="11" /><TextBlock Text="{Binding Detail}" Classes="muted" FontSize="9" Margin="0,3,0,0" /></StackPanel><TextBlock Grid.Column="2" Text="›" Foreground="#B0A6A1" FontSize="18" VerticalAlignment="Center" /></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                        </StackPanel></Border>
+                        <Border Grid.Column="1" Classes="sectionCard"><StackPanel>
+                            <Grid Margin="18,15,18,13" ColumnDefinitions="*,Auto"><StackPanel><TextBlock Text="商品表现" Classes="eyebrow" /><TextBlock Text="近7日畅销款" FontSize="16" FontWeight="SemiBold" Margin="0,7,0,0" /></StackPanel><Button Grid.Column="1" Classes="link" Content="查看库存" Command="{Binding SelectSectionCommand}" CommandParameter="库存管理" /></Grid>
+                            <ItemsControl ItemsSource="{Binding TopSellingProducts}"><ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:TopSellingProduct"><Border Classes="row" Padding="18,12"><Grid ColumnDefinitions="30,*,Auto" ColumnSpacing="10"><Border Width="25" Height="25" CornerRadius="7" Background="#F2EEEB"><TextBlock Text="{Binding Rank}" Foreground="#827873" FontWeight="Bold" FontSize="9" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><StackPanel Grid.Column="1"><TextBlock Text="{Binding ProductName}" FontWeight="SemiBold" FontSize="11" /><TextBlock Text="{Binding StyleNumber}" Classes="muted" FontSize="9" Margin="0,3,0,0" /></StackPanel><StackPanel Grid.Column="2" Width="102" VerticalAlignment="Center"><TextBlock Text="{Binding QuantityText}" FontWeight="SemiBold" FontSize="10" TextAlignment="Right" /><ProgressBar Classes="aging" Value="{Binding PerformancePercent}" Maximum="100" Margin="0,6,0,0" /></StackPanel></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                        </StackPanel></Border>
+                    </Grid>
+                    <Border Classes="sectionCard"><StackPanel>
+                        <Grid Margin="18,15,18,13" ColumnDefinitions="*,Auto"><StackPanel><TextBlock Text="最近单据" Classes="eyebrow" /><TextBlock Text="销售与发货动态" FontSize="16" FontWeight="SemiBold" Margin="0,7,0,0" /></StackPanel><Button Grid.Column="1" Classes="link" Content="全部单据" Command="{Binding SelectSectionCommand}" CommandParameter="配货发货" /></Grid>
+                        <ItemsControl ItemsSource="{Binding RecentOrders}"><ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:RecentOrder"><Border Classes="row" Padding="18,12" Tag="{Binding}" PointerPressed="RecentOrder_PointerPressed" Cursor="Hand"><Grid ColumnDefinitions="40,*,100,100,90,16"><Border Width="30" Height="30" CornerRadius="8" Background="{Binding StatusBackground}"><TextBlock Text="{Binding Initial}" Foreground="{Binding StatusForeground}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><StackPanel Grid.Column="1"><TextBlock Text="{Binding Customer}" FontWeight="SemiBold" FontSize="11" /><TextBlock Text="{Binding Number}" Classes="muted" FontSize="9" Margin="0,3,0,0" /></StackPanel><StackPanel Grid.Column="2"><TextBlock Text="{Binding Quantity}" FontWeight="SemiBold" FontSize="10" TextAlignment="Right" /><TextBlock Text="{Binding Amount}" Classes="muted" FontSize="9" TextAlignment="Right" Margin="0,3,0,0" /></StackPanel><TextBlock Grid.Column="3" Text="{Binding TimeText}" Classes="muted" FontSize="9" HorizontalAlignment="Center" VerticalAlignment="Center" /><Border Grid.Column="4" Classes="statusPill" Background="{Binding StatusBackground}" VerticalAlignment="Center"><TextBlock Text="{Binding DisplayStatus}" Foreground="{Binding StatusForeground}" FontSize="9" FontWeight="SemiBold" /></Border><TextBlock Grid.Column="5" Text="›" Foreground="#B0A6A1" FontSize="18" VerticalAlignment="Center" /></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                    </StackPanel></Border>
+                </StackPanel>
+
+                <!-- 销售开单 -->
+                <StackPanel Classes="page" IsVisible="{Binding IsSales}" Margin="74,6,74,28">
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10"><StackPanel><TextBlock Text="销售管理 / 新建" Classes="eyebrow" /><TextBlock Text="销售开单" Classes="pageTitle" /><TextBlock Text="{Binding SalesOrderDraftText}" Classes="pageSubtitle" /></StackPanel><Button Grid.Column="1" Classes="link" Content="清空重开" Command="{Binding ClearSalesOrderCommand}" VerticalAlignment="Center" /><Border Grid.Column="2" Background="#EEEAE7" CornerRadius="15" Padding="14,6" VerticalAlignment="Center"><TextBlock Text="{Binding SalesDraftStatusText}" Foreground="#756B66" FontSize="10" FontWeight="SemiBold" /></Border></Grid>
+                    <Border Classes="sectionCard" Padding="16">
+                        <Grid ColumnDefinitions="2.15*,1*,1*" ColumnSpacing="12">
+                            <StackPanel>
+                                <TextBlock Text="客户 *" Classes="label" Foreground="#9D3037" />
+                                <StackPanel Spacing="4">
+                                    <Grid>
+                                        <TextBox x:Name="SalesCustomerSearchInput" Text="{Binding SalesCustomerSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="输入客户名称或编号搜索" Padding="13,8,48,8" TextChanged="SalesCustomerSearchInput_TextChanged" GotFocus="SalesCustomerSearchInput_GotFocus" KeyDown="SalesCustomerSearchInput_KeyDown" />
+                                        <Button Width="44" Height="44" HorizontalAlignment="Right" Background="Transparent" Foreground="#6F6560" BorderBrush="#DDD8D4" BorderThickness="1,0,0,0" CornerRadius="0,9,9,0" Padding="0" Click="ToggleSalesCustomerDropDown_Click" ToolTip.Tip="展开客户列表"><Path Width="12" Height="8" Data="M 1,1 L 6,6 L 11,1" Stroke="#6F6560" StrokeThickness="1.6" StrokeLineCap="Round" StrokeJoin="Round" /></Button>
+                                    </Grid>
+                                    <Border x:Name="SalesCustomerSearchPanel" IsVisible="False" HorizontalAlignment="Stretch" MaxHeight="300" Background="White" BorderBrush="#D8D2CE" BorderThickness="1" CornerRadius="9" BoxShadow="0 8 22 0 #26000000" ClipToBounds="True">
+                                        <Grid RowDefinitions="Auto,*">
+                                            <Border Background="#FAF8F7" BorderBrush="#ECE6E3" BorderThickness="0,0,0,1" Padding="13,9"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="选择客户" FontWeight="SemiBold" /><TextBlock x:Name="SalesCustomerResultCount" Grid.Column="1" Text="0 条结果" Foreground="#8A807B" FontSize="10" VerticalAlignment="Center" /></Grid></Border>
+                                            <ScrollViewer Grid.Row="1" MaxHeight="250" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel><ItemsControl Classes="searchResults" HorizontalAlignment="Stretch" ItemsSource="{Binding FilteredSalesCustomers}"><ItemsControl.ItemTemplate><DataTemplate x:DataType="app:CustomerListItem"><Button Classes="searchOption" HorizontalAlignment="Stretch" Tag="{Binding}" Click="SelectSalesCustomer_Click"><Grid ColumnDefinitions="95,*,Auto" ColumnSpacing="12"><TextBlock Text="{Binding Code}" FontWeight="Bold" Foreground="#A32F38" VerticalAlignment="Center" /><StackPanel Grid.Column="1"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" /><TextBlock Text="{Binding ContactText}" Foreground="#8A807B" FontSize="9" Margin="0,3,0,0" /></StackPanel><TextBlock Grid.Column="2" Text="{Binding ReceivableText}" Foreground="#6F6560" FontSize="9" VerticalAlignment="Center" /></Grid></Button></DataTemplate></ItemsControl.ItemTemplate></ItemsControl><TextBlock Text="没有匹配客户" IsVisible="{Binding HasNoFilteredSalesCustomers}" Foreground="#8A807B" HorizontalAlignment="Center" Margin="20" /></StackPanel></ScrollViewer>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{Binding SelectedCustomerSalesHint}" Foreground="#B06C3E" FontSize="9" Margin="2,4,0,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1"><TextBlock Text="发货仓库" Classes="label" /><ComboBox ItemsSource="{Binding Warehouses}" SelectedItem="{Binding SelectedWarehouse}" DisplayMemberBinding="{Binding Name}" /></StackPanel>
+                            <StackPanel Grid.Column="2"><TextBlock Text="单据日期" Classes="label" /><CalendarDatePicker Classes="dateField" SelectedDate="{Binding SelectedSalesOrderDate}" PlaceholderText="选择单据日期" /></StackPanel>
+                        </Grid>
+                    </Border>
+                    <Border Classes="sectionCard">
+                        <Grid RowDefinitions="Auto,Auto,44,*,Auto" MinHeight="410">
+                            <StackPanel Margin="18,15,18,12"><TextBlock Text="商品明细" Classes="eyebrow" /><TextBlock Text="颜色尺码快速录入" FontSize="16" FontWeight="SemiBold" Margin="0,7,0,0" /></StackPanel>
+                            <StackPanel Grid.Row="1" Margin="18,0,18,12" Spacing="4">
+                                <Grid>
+                                    <TextBox x:Name="SalesProductSearchInput" Text="{Binding SalesProductSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="搜索当前仓库有可用库存的款号或商品名称" Padding="13,8,48,8" TextChanged="SalesProductSearchInput_TextChanged" GotFocus="SalesProductSearchInput_GotFocus" KeyDown="SalesProductSearchInput_KeyDown" />
+                                    <Button Width="44" Height="44" HorizontalAlignment="Right" Background="Transparent" Foreground="#6F6560" BorderBrush="#DDD8D4" BorderThickness="1,0,0,0" CornerRadius="0,9,9,0" Padding="0" Click="ToggleSalesProductDropDown_Click" ToolTip.Tip="展开商品列表"><Path Width="12" Height="8" Data="M 1,1 L 6,6 L 11,1" Stroke="#6F6560" StrokeThickness="1.6" StrokeLineCap="Round" StrokeJoin="Round" /></Button>
+                                </Grid>
+                                <Border x:Name="SalesProductSearchPanel" IsVisible="False" HorizontalAlignment="Stretch" MaxHeight="320" Background="White" BorderBrush="#D8D2CE" BorderThickness="1" CornerRadius="9" BoxShadow="0 8 22 0 #26000000" ClipToBounds="True">
+                                    <Grid RowDefinitions="Auto,*">
+                                        <Border Background="#FAF8F7" BorderBrush="#ECE6E3" BorderThickness="0,0,0,1" Padding="13,9"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="选择商品" FontWeight="SemiBold" /><TextBlock x:Name="SalesProductResultCount" Grid.Column="1" Text="0 条结果" Foreground="#8A807B" FontSize="10" VerticalAlignment="Center" /></Grid></Border>
+                                        <ScrollViewer Grid.Row="1" MaxHeight="270" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel><ItemsControl Classes="searchResults" HorizontalAlignment="Stretch" ItemsSource="{Binding FilteredSalesProducts}"><ItemsControl.ItemTemplate><DataTemplate x:DataType="app:ProductListItem"><Button Classes="searchOption" HorizontalAlignment="Stretch" Tag="{Binding}" Click="SelectSalesProduct_Click"><Grid ColumnDefinitions="110,*,Auto" ColumnSpacing="12"><TextBlock Text="{Binding StyleNumber}" FontWeight="Bold" Foreground="#A32F38" VerticalAlignment="Center" /><StackPanel Grid.Column="1"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" /><TextBlock Text="{Binding Category}" Foreground="#8A807B" FontSize="9" Margin="0,3,0,0" /></StackPanel><TextBlock Grid.Column="2" Text="{Binding BasePriceText}" Foreground="#6F6560" FontSize="9" VerticalAlignment="Center" /></Grid></Button></DataTemplate></ItemsControl.ItemTemplate></ItemsControl><TextBlock Text="当前仓库没有匹配的可售商品" IsVisible="{Binding HasNoFilteredSalesProducts}" Foreground="#8A807B" HorizontalAlignment="Center" Margin="20" /></StackPanel></ScrollViewer>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                            <Border Grid.Row="2" Classes="softHeader" Padding="12,0">
+                                <Grid ColumnDefinitions="1.15*,0.8*,3.1*,0.65*,0.75*,0.85*,34">
+                                    <TextBlock Text="款号 / 商品" Classes="tableHeader" />
+                                    <TextBlock Grid.Column="1" Text="颜色" Classes="tableHeader" />
+                                    <TextBlock Grid.Column="2" Text="尺码 / 数量" Classes="tableHeader" TextAlignment="Center" />
+                                    <TextBlock Grid.Column="3" Text="数量" Classes="tableHeader" TextAlignment="Center" />
+                                    <TextBlock Grid.Column="4" Text="单价" Classes="tableHeader" TextAlignment="Center" />
+                                    <TextBlock Grid.Column="5" Text="金额" Classes="tableHeader" TextAlignment="Right" />
+                                </Grid>
+                            </Border>
+                            <Grid Grid.Row="3">
+                                <ScrollViewer MaxHeight="255">
+                                    <ItemsControl ItemsSource="{Binding SalesEntryRows}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:SalesEntryRow">
+                                                <Border Classes="row" Padding="12,10">
+                                                    <Grid ColumnDefinitions="1.15*,0.8*,3.1*,0.65*,0.75*,0.85*,34">
+                                                        <StackPanel VerticalAlignment="Center"><TextBlock Text="{Binding StyleNumber}" FontWeight="SemiBold" FontSize="11" /><TextBlock Text="{Binding ProductName}" Classes="muted" FontSize="9" Margin="0,3,0,0" /></StackPanel>
+                                                        <ComboBox Grid.Column="1" Classes="colorPicker" ItemsSource="{Binding ColorOptions}" SelectedItem="{Binding SelectedColor}" Margin="0,0,10,0" VerticalAlignment="Center" />
+                                                        <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                                                            <ItemsControl ItemsSource="{Binding SizeEntries}">
+                                                                <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="8" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                                                <ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:SalesSizeEntryCell"><StackPanel Width="48"><TextBlock Text="{Binding SizeCode}" FontSize="9" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,4" /><TextBox Classes="sizeQty" Text="{Binding QuantityText}" PlaceholderText="0" /><TextBlock Text="{Binding AvailableText}" Classes="muted" FontSize="8" TextAlignment="Center" Margin="0,3,0,0" /></StackPanel></DataTemplate></ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </ScrollViewer>
+                                                        <TextBlock Grid.Column="3" Text="{Binding TotalQuantityText}" FontWeight="SemiBold" FontSize="10" TextAlignment="Center" VerticalAlignment="Center" />
+                                                        <TextBox Grid.Column="4" Text="{Binding UnitPriceText}" Classes="numeric" Width="78" Height="38" MinHeight="38" Padding="7,4" VerticalAlignment="Center" />
+                                                        <TextBlock Grid.Column="5" Text="{Binding AmountText}" FontWeight="Bold" FontSize="11" TextAlignment="Right" VerticalAlignment="Center" />
+                                                        <Button Grid.Column="6" Classes="link" Content="×" FontSize="16" Command="{Binding RemoveCommand}" VerticalAlignment="Center" ToolTip.Tip="移除此颜色行" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                                <StackPanel IsVisible="{Binding HasNoSalesEntryRows}" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="先搜索并选择一个商品" Foreground="#817773" FontSize="12" TextAlignment="Center" /><TextBlock Text="系统会自动带入该商品的颜色、尺码、库存和销售价" Classes="muted" Margin="0,6,0,0" /></StackPanel>
+                            </Grid>
+                            <Border Grid.Row="4" Background="#F8F1EF" Padding="12,13"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="本单合计" Foreground="#5E312F" FontWeight="SemiBold" /><TextBlock Grid.Column="1" Text="{Binding CartSummary}" Foreground="#7E2C31" FontWeight="Bold" /></Grid></Border>
+                        </Grid>
+                    </Border>
+                    <Border Classes="sectionCard" Padding="18">
+                        <Grid RowDefinitions="Auto,1,Auto" RowSpacing="14">
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+                                <StackPanel><TextBlock Text="运费" Classes="label" /><TextBox Text="{Binding FreightText}" PlaceholderText="0.00" /></StackPanel>
+                                <StackPanel Grid.Column="1"><TextBlock Text="本次优惠" Classes="label" /><TextBox Text="{Binding DiscountText}" PlaceholderText="0.00" /></StackPanel>
+                                <StackPanel Grid.Column="2"><TextBlock Text="本次收款" Classes="label" /><TextBox Text="{Binding CurrentReceivedText}" IsReadOnly="True" /></StackPanel>
+                                <StackPanel Grid.Column="3"><TextBlock Text="收款状态" Classes="label" /><ComboBox ItemsSource="{Binding PaymentStatuses}" SelectedItem="{Binding SelectedPaymentStatus}" /></StackPanel>
+                            </Grid>
+                            <Border Grid.Row="1" Background="#EEE7E3" />
+                            <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
+                                <StackPanel Spacing="8" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="28">
+                                        <StackPanel><TextBlock Text="商品数量" Classes="muted" /><TextBlock Text="{Binding CartQuantityText}" FontWeight="Bold" Margin="0,4,0,0" /></StackPanel>
+                                        <StackPanel><TextBlock Text="商品金额" Classes="muted" /><TextBlock Text="{Binding CartAmountText}" FontWeight="Bold" Margin="0,4,0,0" /></StackPanel>
+                                        <StackPanel><TextBlock Text="应付金额" Classes="muted" /><TextBlock Text="{Binding PayableAmountText}" FontWeight="Bold" Margin="0,4,0,0" /></StackPanel>
+                                        <StackPanel><TextBlock Text="本次欠款" Classes="muted" /><TextBlock Text="{Binding CurrentDebtText}" Foreground="#9D3037" FontWeight="Bold" FontSize="16" Margin="0,4,0,0" /></StackPanel>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding SalesCreditHint}" Foreground="{Binding SalesCreditHintColor}" FontSize="10" FontWeight="SemiBold" />
+                                </StackPanel>
+                                <Button Grid.Column="1" Classes="link" Content="保存草稿" Command="{Binding SaveSalesDraftCommand}" />
+                                <Button Grid.Column="2" Classes="secondary" Content="打印预览" Command="{Binding PreviewSalesOrderCommand}" />
+                                <Button Grid.Column="3" Classes="primary" Content="审核并生成配货单" Command="{Binding SubmitSalesOrderCommand}" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- 客户管理：按原型图还原 -->
+                <StackPanel IsVisible="{Binding IsCustomers}" Margin="92,6,92,26" Spacing="18">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel><TextBlock Text="往来单位" Foreground="#9D3037" FontSize="11" FontWeight="Bold" /><TextBlock Text="客户管理" Foreground="#26201E" FontSize="28" FontWeight="Bold" Margin="0,9,0,5" /><TextBlock Text="客户档案、交易与欠款集中查看" Foreground="#817773" FontSize="11" /></StackPanel>
+                        <Border Grid.Column="1" BoxShadow="0 5 12 0 #26000000" CornerRadius="9" VerticalAlignment="Center"><Button Classes="primary" Command="{Binding OpenNewCustomerCommand}" MinWidth="112">＋ 新建客户</Button></Border>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="16">
+                        <Border Grid.Column="0" Height="132" Background="White" BorderBrush="#EBE4DF" BorderThickness="1" CornerRadius="14" BoxShadow="0 5 18 0 #0D000000" Padding="20,18"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="35" Background="#D5CBC5" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="15,0,0,0"><TextBlock Text="客户总数" Foreground="#817773" FontSize="12" /><TextBlock Text="{Binding CustomerTotalText}" Foreground="#292321" FontSize="27" FontWeight="Bold" Margin="0,10,0,6" /><TextBlock Text="{Binding CustomerNewThisMonthText}" Foreground="#918783" FontSize="10" /></StackPanel></Grid></Border>
+                        <Border Grid.Column="1" Height="132" Background="White" BorderBrush="#EBE4DF" BorderThickness="1" CornerRadius="14" BoxShadow="0 5 18 0 #0D000000" Padding="20,18"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="35" Background="#A4343B" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="15,0,0,0"><TextBlock Text="本月成交客户" Foreground="#817773" FontSize="12" /><TextBlock Text="{Binding CustomerMonthlyDealText}" Foreground="#292321" FontSize="27" FontWeight="Bold" Margin="0,10,0,6" /><TextBlock Text="{Binding CustomerMonthlyDealRateText}" Foreground="#918783" FontSize="10" /></StackPanel></Grid></Border>
+                        <Border Grid.Column="2" Height="132" Background="White" BorderBrush="#EBE4DF" BorderThickness="1" CornerRadius="14" BoxShadow="0 5 18 0 #0D000000" Padding="20,18"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="35" Background="#D69231" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="15,0,0,0"><TextBlock Text="有欠款客户" Foreground="#817773" FontSize="12" /><TextBlock Text="{Binding CustomerReceivableCountText}" Foreground="#292321" FontSize="27" FontWeight="Bold" Margin="0,10,0,6" /><TextBlock Text="{Binding CustomerReceivableTotalText}" Foreground="#C07B24" FontSize="10" /></StackPanel></Grid></Border>
+                    </Grid>
+
+                    <Border Background="White" BorderBrush="#E8E0DB" BorderThickness="1" CornerRadius="14" BoxShadow="0 5 20 0 #10000000" ClipToBounds="True">
+                        <Grid RowDefinitions="72,44,*">
+                            <Grid Margin="18,0" ColumnDefinitions="465,136,94,*" ColumnSpacing="10">
+                                <Border Classes="searchShell" VerticalAlignment="Center"><Grid ColumnDefinitions="38,*"><Path Data="M9,3 A6,6 0 1 0 9,15 A6,6 0 0 0 9,3 M13.5,13.5 L18,18" Stroke="#8A807B" StrokeThickness="1.7" Width="15" Height="15" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" /><TextBox Grid.Column="1" Classes="search" Text="{Binding CustomerSearchText}" PlaceholderText="搜索客户名称、联系人或编号" FontSize="11" /></Grid></Border>
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding CustomerStatusFilters}" SelectedItem="{Binding SelectedCustomerStatusFilter}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                <Button Grid.Column="2" Classes="secondary" VerticalAlignment="Center" Click="ExportCustomers_Click">导出客户</Button>
+                            </Grid>
+                            <Grid Grid.Row="1" Background="#F7F3F1" ColumnDefinitions="1.55*,1.75*,1*,1.2*,1.05*,1.2*,70" Margin="16,0"><TextBlock Text="客户" Foreground="#6E6560" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="1" Text="地区 / 联系人" Foreground="#6E6560" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="2" Text="当前欠款" Foreground="#6E6560" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="3" Text="信用额度" Foreground="#6E6560" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="4" Text="累计销售" Foreground="#6E6560" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="5" Text="最近交易" Foreground="#6E6560" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center" /></Grid>
+                            <ListBox Grid.Row="2" Classes="customerList" ItemsSource="{Binding FilteredCustomers}" SelectedItem="{Binding SelectedManagedCustomer}" Background="Transparent" BorderThickness="0" MaxHeight="430">
+                                <ListBox.ItemTemplate><DataTemplate x:DataType="app:CustomerListItem"><Border BorderBrush="#EEE8E4" BorderThickness="0,0,0,1" Padding="16,13"><Grid ColumnDefinitions="1.55*,1.75*,1*,1.2*,1.05*,1.2*,70">
+                                    <StackPanel VerticalAlignment="Center"><TextBlock Text="{Binding Name}" Foreground="#292321" FontSize="11" FontWeight="SemiBold" /><TextBlock Text="{Binding CustomerSubtext}" Foreground="#978D88" FontSize="9" Margin="0,5,0,0" /></StackPanel>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Address}" Foreground="#3E3734" FontSize="10" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding ContactText}" Foreground="#978D88" FontSize="9" Margin="0,5,0,0" /></StackPanel>
+                                    <Grid Grid.Column="2" VerticalAlignment="Center"><TextBlock IsVisible="{Binding HasReceivable}" Text="{Binding ReceivableText}" Foreground="#C44348" FontSize="10" FontWeight="SemiBold" /><TextBlock IsVisible="{Binding HasNoReceivable}" Text="¥0.00" Foreground="#318A65" FontSize="10" FontWeight="SemiBold" /></Grid>
+                                    <StackPanel Grid.Column="3" VerticalAlignment="Center"><TextBlock Text="{Binding CreditLimitText}" Foreground="#3E3734" FontSize="10" /><TextBlock Text="{Binding AvailableCreditText}" Foreground="#978D88" FontSize="9" Margin="0,5,0,0" /></StackPanel>
+                                    <TextBlock Grid.Column="4" Text="{Binding TotalSalesText}" Foreground="#3E3734" FontSize="10" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="5" Text="{Binding LastTransactionText}" Foreground="#3E3734" FontSize="10" VerticalAlignment="Center" />
+                                    <Button Grid.Column="6" Classes="link" Click="CustomerView_Click" Tag="{Binding}" VerticalAlignment="Center">查看 ›</Button>
+                                </Grid></Border></DataTemplate></ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- 库存 -->
+                <StackPanel Classes="page" IsVisible="{Binding IsStock}">
+                    <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="9">
+                        <StackPanel><TextBlock Text="货品中心" Classes="eyebrow" /><TextBlock Text="库存管理" Classes="pageTitle" /><TextBlock Text="按款号、颜色和尺码查看真实库存与占用" Classes="pageSubtitle" /></StackPanel>
+                        <Button Grid.Column="1" Classes="secondary" Command="{Binding OpenNewProductCommand}" VerticalAlignment="Center">新增商品</Button>
+                        <Button Grid.Column="2" Classes="secondary" Command="{Binding OpenNewSkuCommand}" VerticalAlignment="Center">新增规格</Button>
+                        <Button Grid.Column="3" Classes="secondary" Command="{Binding OpenAdjustStockCommand}" VerticalAlignment="Center">库存盘点</Button>
+                        <Border Grid.Column="4" BoxShadow="0 5 12 0 #26000000" CornerRadius="9" VerticalAlignment="Center"><Button Classes="primary" Command="{Binding OpenReceiveStockCommand}">＋ 采购入库</Button></Border>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+                        <Border Classes="metricCard" Height="132"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="35" Background="#A4343B" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="15,0,0,0"><TextBlock Text="库存总件数" Classes="muted" /><TextBlock Text="{Binding StockOnHandTotalText}" FontSize="27" FontWeight="Bold" Margin="0,10,0,6" /><TextBlock Text="{Binding StockAvailableTotalText, StringFormat='可用 {0} 件'}" Foreground="#918783" FontSize="10" /></StackPanel></Grid></Border>
+                        <Border Grid.Column="1" Classes="metricCard" Height="132"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="35" Background="#D5CBC5" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="15,0,0,0"><TextBlock Text="库存成本" Classes="muted" /><TextBlock Text="{Binding StockValueText}" FontSize="27" FontWeight="Bold" Margin="0,10,0,6" /><TextBlock Text="按商品成本价估算" Foreground="#918783" FontSize="10" /></StackPanel></Grid></Border>
+                        <Border Grid.Column="2" Classes="metricCard" Height="132"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="35" Background="#D69231" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="15,0,0,0"><TextBlock Text="库存预警" Classes="muted" /><TextBlock Text="{Binding StockWarningCountText}" FontSize="27" FontWeight="Bold" Margin="0,10,0,6" /><TextBlock Text="{Binding StockOutCountText}" Foreground="#C07B24" FontSize="10" /></StackPanel></Grid></Border>
+                        <Border Grid.Column="3" Classes="metricCard" Height="132"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="35" Background="#D5CBC5" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="15,0,0,0"><TextBlock Text="锁定待发" Classes="muted" /><TextBlock Text="{Binding StockReservedTotalText}" FontSize="27" FontWeight="Bold" Margin="0,10,0,6" /><TextBlock Text="{Binding StockReservedOrderText}" Foreground="#918783" FontSize="10" /></StackPanel></Grid></Border>
+                    </Grid>
+
+                    <Border Classes="card" Padding="0" ClipToBounds="True">
+                        <Grid RowDefinitions="72,44,*">
+                            <Grid Margin="18,0" ColumnDefinitions="2.2*,0.8*,0.8*,0.8*,0.8*" ColumnSpacing="9">
+                                <Border Classes="searchShell" VerticalAlignment="Center"><Grid ColumnDefinitions="38,*"><Path Data="M9,3 A6,6 0 1 0 9,15 A6,6 0 0 0 9,3 M13.5,13.5 L18,18" Stroke="#8A807B" StrokeThickness="1.7" Width="15" Height="15" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" /><TextBox Grid.Column="1" Classes="search" Text="{Binding InventorySearchText}" PlaceholderText="搜索款号、品名或颜色" FontSize="11" /></Grid></Border>
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding InventoryWarehouseFilters}" SelectedItem="{Binding SelectedInventoryWarehouseFilter}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                <ComboBox Grid.Column="2" ItemsSource="{Binding InventoryCategoryFilters}" SelectedItem="{Binding SelectedInventoryCategoryFilter}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding InventorySeasonFilters}" SelectedItem="{Binding SelectedInventorySeasonFilter}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                <ComboBox Grid.Column="4" ItemsSource="{Binding InventoryStatusFilters}" SelectedItem="{Binding SelectedInventoryStatusFilter}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                            </Grid>
+                            <Border Grid.Row="1" Background="#F7F3F1" Padding="12,0"><Grid ColumnDefinitions="34,1.25*,0.72*,0.65*,0.72*,1.55*,0.68*,0.58*,0.58*,0.7*"><TextBlock Grid.Column="1" Text="款号 / 商品" Classes="muted" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="2" Text="品类" Classes="muted" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="3" Text="季节" Classes="muted" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="4" Text="颜色" Classes="muted" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="5" Text="有货尺码" Classes="muted" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="6" Text="实际" Classes="muted" FontWeight="SemiBold" TextAlignment="Center" VerticalAlignment="Center" /><TextBlock Grid.Column="7" Text="锁定" Classes="muted" FontWeight="SemiBold" TextAlignment="Center" VerticalAlignment="Center" /><TextBlock Grid.Column="8" Text="可用" Classes="muted" FontWeight="SemiBold" TextAlignment="Center" VerticalAlignment="Center" /><TextBlock Grid.Column="9" Text="状态" Classes="muted" FontWeight="SemiBold" TextAlignment="Center" VerticalAlignment="Center" /></Grid></Border>
+                            <ListBox Grid.Row="2" Classes="plainList" ItemsSource="{Binding FilteredInventorySummaryRows}" SelectedItem="{Binding SelectedInventorySummaryRow}" Background="Transparent" BorderThickness="0" MaxHeight="470">
+                                <ListBox.ItemTemplate><DataTemplate x:DataType="vm:InventorySummaryRow"><StackPanel>
+                                    <Border Classes="row" Background="Transparent" HorizontalAlignment="Stretch" Padding="12,12" Tag="{Binding}" PointerPressed="InventorySummaryRow_PointerPressed" Cursor="Hand"><Grid ColumnDefinitions="34,1.25*,0.72*,0.65*,0.72*,1.55*,0.68*,0.58*,0.58*,0.7*">
+                                        <TextBlock Text="{Binding ExpandGlyph}" FontSize="16" Width="26" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" />
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding StyleNumber}" Foreground="#292321" FontSize="11" FontWeight="SemiBold" /><TextBlock Text="{Binding ProductName}" Foreground="#978D88" FontSize="9" Margin="0,4,0,0" /></StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding Category}" Foreground="#3E3734" FontSize="10" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="3" Text="{Binding Season}" Foreground="#3E3734" FontSize="10" VerticalAlignment="Center" />
+                                        <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center"><Ellipse Width="8" Height="8" Fill="{Binding ColorDotBrush}" /><TextBlock Text="{Binding ColorCode}" Foreground="#3E3734" FontSize="10" /></StackPanel>
+                                        <TextBlock Grid.Column="5" Text="{Binding SizesText}" Foreground="#3E3734" FontSize="9" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="6" Text="{Binding OnHand}" Foreground="#3E3734" FontSize="10" FontWeight="SemiBold" TextAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="7" Text="{Binding Reserved}" Foreground="#6F6661" FontSize="10" TextAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="8" Text="{Binding Available}" Foreground="#292321" FontSize="10" FontWeight="SemiBold" TextAlignment="Center" VerticalAlignment="Center" />
+                                        <Border Grid.Column="9" Width="52" Height="26" CornerRadius="13" Background="{Binding StatusBackground}" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock Text="{Binding Status}" Foreground="{Binding StatusForeground}" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                                    </Grid></Border>
+                                    <Border IsVisible="{Binding IsExpanded}" Background="#FCFAF8" BorderBrush="#EDE6E2" BorderThickness="0,0,0,1" Padding="46,7,12,10">
+                                        <StackPanel><Grid ColumnDefinitions="0.7*,1.2*,1.5*,0.65*,0.65*,0.65*,68" Margin="0,4,0,7"><TextBlock Text="尺码" Classes="muted" FontSize="9" /><TextBlock Grid.Column="1" Text="所在仓库" Classes="muted" FontSize="9" /><TextBlock Grid.Column="2" Text="条码" Classes="muted" FontSize="9" /><TextBlock Grid.Column="3" Text="实际" Classes="muted" FontSize="9" TextAlignment="Center" /><TextBlock Grid.Column="4" Text="锁定" Classes="muted" FontSize="9" TextAlignment="Center" /><TextBlock Grid.Column="5" Text="可用" Classes="muted" FontSize="9" TextAlignment="Center" /></Grid><ItemsControl ItemsSource="{Binding Details}"><ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:InventorySkuDetailRow"><Border Background="White" CornerRadius="7" Margin="0,0,0,5" Padding="9,7"><Grid ColumnDefinitions="0.7*,1.2*,1.5*,0.65*,0.65*,0.65*,68"><TextBlock Text="{Binding SizeCode}" FontWeight="SemiBold" FontSize="10" /><TextBlock Grid.Column="1" Text="{Binding WarehouseText}" FontSize="9" Foreground="#6F6661" /><TextBlock Grid.Column="2" Text="{Binding BarcodeText}" FontSize="9" Foreground="#6F6661" /><TextBlock Grid.Column="3" Text="{Binding OnHand}" TextAlignment="Center" FontSize="10" /><TextBlock Grid.Column="4" Text="{Binding Reserved}" TextAlignment="Center" FontSize="10" /><TextBlock Grid.Column="5" Text="{Binding Available}" TextAlignment="Center" FontWeight="SemiBold" FontSize="10" /><Button Grid.Column="6" Classes="link" Content="编辑" Tag="{Binding}" Click="EditInventorySku_Click" /></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel>
+                                    </Border>
+                                </StackPanel></DataTemplate></ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- 发货 -->
+                <StackPanel Classes="page" IsVisible="{Binding IsShipping}" Margin="74,6,74,28">
+                    <Grid ColumnDefinitions="*,Auto"><StackPanel><TextBlock Text="仓库作业" Classes="eyebrow" /><TextBlock Text="配货与发货" Classes="pageTitle" /><TextBlock Text="销售订单、拣货、打包、发货与客户签收全程跟踪" Classes="pageSubtitle" /></StackPanel><Button Grid.Column="1" Classes="secondary" Content="刷新数据" Command="{Binding RefreshDataCommand}" VerticalAlignment="Center" /></Grid>
+                    <Border Background="#302522" CornerRadius="14" ClipToBounds="True"><UniformGrid Columns="4">
+                        <Border Padding="20,17" BorderBrush="#493B37" BorderThickness="0,0,1,0"><StackPanel><TextBlock Text="待配货" Foreground="#C8BEBA" FontSize="10" /><TextBlock Text="{Binding WaitingPickingCount}" Foreground="White" FontSize="25" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="{Binding WaitingPickingQuantityText, StringFormat='共 {0} 件'}" Foreground="#A99E9A" FontSize="10" /></StackPanel></Border>
+                        <Border Padding="20,17" BorderBrush="#493B37" BorderThickness="0,0,1,0"><StackPanel><TextBlock Text="配货中" Foreground="#C8BEBA" FontSize="10" /><TextBlock Text="{Binding PickingCount}" Foreground="White" FontSize="25" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="{Binding PickingQuantityText, StringFormat='共 {0} 件'}" Foreground="#A99E9A" FontSize="10" /></StackPanel></Border>
+                        <Border Padding="20,17" BorderBrush="#493B37" BorderThickness="0,0,1,0"><StackPanel><TextBlock Text="待发货" Foreground="#C8BEBA" FontSize="10" /><TextBlock Text="{Binding ReadyToShipCount}" Foreground="White" FontSize="25" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="{Binding ReadyToShipQuantityText, StringFormat='共 {0} 件'}" Foreground="#A99E9A" FontSize="10" /></StackPanel></Border>
+                        <Border Padding="20,17"><StackPanel><TextBlock Text="今日已发" Foreground="#C8BEBA" FontSize="10" /><TextBlock Text="{Binding TodayShippedCountText}" Foreground="White" FontSize="25" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="{Binding TodayShippedQuantityText}" Foreground="#A99E9A" FontSize="10" /></StackPanel></Border>
+                    </UniformGrid></Border>
+                    <Border Classes="sectionCard"><Grid RowDefinitions="52,*">
+                        <Border Background="#FCFAF8" BorderBrush="#EEE7E3" BorderThickness="0,0,0,1" Padding="16,9"><ItemsControl ItemsSource="{Binding ShippingStatusFilterOptions}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="9" /></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:ShippingStatusFilterItem"><Button Classes="shippingFilter" Classes.active="{Binding IsSelected}" Content="{Binding Name}" Tag="{Binding Name}" Click="ShippingStatusFilter_Click" /></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></Border>
+                        <ListBox Grid.Row="1" Classes="plainList" ItemsSource="{Binding FilteredShippingOrders}" SelectedItem="{Binding SelectedShippingOrder}" Background="Transparent" BorderThickness="0" MaxHeight="290"><ListBox.ItemTemplate><DataTemplate x:DataType="app:SalesOrderListItem"><Border Classes="row" Padding="18,13"><Grid ColumnDefinitions="40,*,105,100,90,16"><Border Width="30" Height="30" CornerRadius="8" Background="{Binding StatusBackground}"><TextBlock Text="货" Foreground="{Binding StatusForeground}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><StackPanel Grid.Column="1"><TextBlock Text="{Binding CustomerName}" FontWeight="SemiBold" FontSize="11" /><TextBlock Text="{Binding Number}" Classes="muted" FontSize="9" Margin="0,3,0,0" /><TextBlock Text="{Binding ExpressTrackingNumberText}" IsVisible="{Binding HasExpressTrackingNumber}" Foreground="#9D3037" FontSize="9" Margin="0,3,0,0" /></StackPanel><StackPanel Grid.Column="2"><TextBlock Text="{Binding QuantityText}" FontWeight="SemiBold" FontSize="10" TextAlignment="Right" /><TextBlock Text="{Binding AmountText}" Classes="muted" FontSize="9" TextAlignment="Right" Margin="0,3,0,0" /></StackPanel><TextBlock Grid.Column="3" Text="{Binding BusinessTimeText}" Classes="muted" FontSize="9" HorizontalAlignment="Center" VerticalAlignment="Center" /><Border Grid.Column="4" Classes="statusPill" Background="{Binding StatusBackground}" VerticalAlignment="Center"><TextBlock Text="{Binding DisplayStatus}" Foreground="{Binding StatusForeground}" FontSize="9" FontWeight="SemiBold" /></Border><TextBlock Grid.Column="5" Text="›" Foreground="#B0A6A1" FontSize="18" VerticalAlignment="Center" /></Grid></Border></DataTemplate></ListBox.ItemTemplate></ListBox>
+                    </Grid></Border>
+                    <Border Classes="sectionCard"><StackPanel>
+                        <Grid Margin="18,14" ColumnDefinitions="*,Auto"><StackPanel><TextBlock Text="标准作业" Classes="eyebrow" /><TextBlock Text="{Binding SelectedShippingOrder.Number, StringFormat='销售单 {0}'}" FontSize="16" FontWeight="SemiBold" Margin="0,7,0,0" /><TextBlock Text="{Binding ShippingOrderDetailSummary}" Classes="muted" FontSize="9" Margin="0,4,0,0" /><TextBlock Text="{Binding SelectedShippingOrder.ExpressTrackingNumberText}" IsVisible="{Binding SelectedShippingOrder.HasExpressTrackingNumber}" Foreground="#9D3037" FontSize="10" FontWeight="SemiBold" Margin="0,5,0,0" /></StackPanel><Border Grid.Column="1" Classes="statusPill" Background="{Binding SelectedShippingOrder.StatusBackground}" VerticalAlignment="Center"><TextBlock Text="{Binding SelectedShippingOrder.DisplayStatus}" Foreground="{Binding SelectedShippingOrder.StatusForeground}" FontSize="9" FontWeight="SemiBold" /></Border></Grid>
+                        <Border Background="#EEE7E3" Height="1" />
+                        <Grid Background="#F8F5F3" Height="38" ColumnDefinitions="120,*,100,90,90,100" Margin="0"><TextBlock Text="款号" Margin="18,0,0,0" VerticalAlignment="Center" FontSize="9" FontWeight="SemiBold" /><TextBlock Grid.Column="1" Text="商品" VerticalAlignment="Center" FontSize="9" FontWeight="SemiBold" /><TextBlock Grid.Column="2" Text="颜色/尺码" VerticalAlignment="Center" FontSize="9" FontWeight="SemiBold" /><TextBlock Grid.Column="3" Text="数量" VerticalAlignment="Center" TextAlignment="Right" FontSize="9" FontWeight="SemiBold" /><TextBlock Grid.Column="4" Text="单价" VerticalAlignment="Center" TextAlignment="Right" FontSize="9" FontWeight="SemiBold" /><TextBlock Grid.Column="5" Text="金额" Margin="0,0,18,0" VerticalAlignment="Center" TextAlignment="Right" FontSize="9" FontWeight="SemiBold" /></Grid>
+                        <ItemsControl ItemsSource="{Binding SelectedShippingOrderLines}" MaxHeight="220"><ItemsControl.ItemTemplate><DataTemplate x:DataType="app:ShippingOrderLineItem"><Border Classes="row" Padding="18,10"><Grid ColumnDefinitions="102,*,100,90,90,82"><TextBlock Text="{Binding StyleNumber}" FontSize="10" FontWeight="SemiBold" /><TextBlock Grid.Column="1" Text="{Binding ProductName}" FontSize="10" /><TextBlock Grid.Column="2" Text="{Binding VariantText}" FontSize="10" /><TextBlock Grid.Column="3" Text="{Binding QuantityText}" FontSize="10" TextAlignment="Right" /><TextBlock Grid.Column="4" Text="{Binding UnitPriceText}" FontSize="10" TextAlignment="Right" /><TextBlock Grid.Column="5" Text="{Binding AmountText}" FontSize="10" FontWeight="SemiBold" TextAlignment="Right" /></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                        <Border Background="#EEE7E3" Height="1" />
+                        <Grid Margin="28,21"><Border Height="2" Background="#E5DEDA" Margin="55,0" VerticalAlignment="Center" /><ItemsControl ItemsSource="{Binding ShippingWorkflowSteps}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="6" /></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:ShippingWorkflowStep"><StackPanel><Border Width="28" Height="28" CornerRadius="14" Background="{Binding Background}"><TextBlock Text="{Binding MarkerText}" Foreground="{Binding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><TextBlock Text="{Binding Label}" Foreground="{Binding LabelForeground}" FontWeight="SemiBold" FontSize="9" HorizontalAlignment="Center" Margin="0,8,0,0" /></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></Grid>
+                    </StackPanel></Border>
+                    <Button Classes="primary" Command="{Binding ExecuteShippingPrimaryActionCommand}" Content="{Binding ShippingPrimaryActionText}" IsEnabled="{Binding CanExecuteShippingPrimaryAction}" HorizontalAlignment="Right" MinWidth="130" />
+                </StackPanel>
+
+                <!-- 应收 -->
+                <StackPanel Classes="page" IsVisible="{Binding IsReceivables}" Margin="74,6,74,28">
+                    <Grid ColumnDefinitions="*,Auto"><StackPanel><TextBlock Text="往来账款" Classes="eyebrow" /><TextBlock Text="客户应收" Classes="pageTitle" /><TextBlock Text="欠款、收款、核销与客户对账" Classes="pageSubtitle" /></StackPanel><Border Grid.Column="1" BoxShadow="0 5 12 0 #26000000" CornerRadius="9" VerticalAlignment="Center"><Button Classes="primary" Content="＋ 记一笔收款" Command="{Binding RecordCustomerPaymentCommand}" IsEnabled="{Binding HasReceivables}" /></Border></Grid>
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+                        <Border Classes="metricCard" Height="116"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="34" Background="#D69231" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="14,0,0,0"><TextBlock Text="应收总额" Classes="muted" /><TextBlock Text="{Binding ReceivableTotalText}" FontSize="24" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="{Binding ReceivableCustomerCountLabel}" Foreground="#C07B24" FontSize="10" /></StackPanel></Grid></Border>
+                        <Border Grid.Column="1" Classes="metricCard" Height="116"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="34" Background="#D5CBC5" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="14,0,0,0"><TextBlock Text="7天内到期" Classes="muted" /><TextBlock Text="{Binding ReceivableDueSoonText}" FontSize="24" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="{Binding ReceivableDueSoonCustomerText}" Foreground="#918783" FontSize="10" /></StackPanel></Grid></Border>
+                        <Border Grid.Column="2" Classes="metricCard" Height="116"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="34" Background="#D69231" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="14,0,0,0"><TextBlock Text="逾期金额" Classes="muted" /><TextBlock Text="{Binding ReceivableOverdueText}" FontSize="24" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="{Binding ReceivableOverdueDetailText}" Foreground="#C07B24" FontSize="10" /></StackPanel></Grid></Border>
+                        <Border Grid.Column="3" Classes="metricCard" Height="116"><Grid ColumnDefinitions="4,*"><Border Width="3" Height="34" Background="#9D3037" CornerRadius="2" VerticalAlignment="Top" /><StackPanel Grid.Column="1" Margin="14,0,0,0"><TextBlock Text="本月已回款" Classes="muted" /><TextBlock Text="{Binding ReceivableRecoveredText}" FontSize="24" FontWeight="Bold" Margin="0,8,0,5" /><TextBlock Text="回款数据按收款记录统计" Foreground="#918783" FontSize="10" /></StackPanel></Grid></Border>
+                    </Grid>
+                    <Grid ColumnDefinitions="1.65*,1*" ColumnSpacing="18">
+                        <Border Classes="sectionCard"><StackPanel>
+                            <Grid Margin="18,15" ColumnDefinitions="*,Auto"><StackPanel><TextBlock Text="欠款客户" Classes="eyebrow" /><TextBlock Text="应收明细" FontSize="16" FontWeight="SemiBold" Margin="0,7,0,0" /></StackPanel><Button Grid.Column="1" Classes="link" Content="导出应收汇总" Click="ExportReceivables_Click" /></Grid>
+                            <ItemsControl ItemsSource="{Binding ReceivableCustomers}"><ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:CustomerReceivableSummary"><Border Classes="row" Padding="18,14"><Grid ColumnDefinitions="40,*,120,60"><Border Width="32" Height="32" CornerRadius="9" Background="#FAE8E9"><TextBlock Text="{Binding Initial}" Foreground="#9D3037" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border><StackPanel Grid.Column="1"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="11" /><TextBlock Text="{Binding LastTransactionText}" Classes="muted" FontSize="9" Margin="0,4,0,0" /></StackPanel><StackPanel Grid.Column="2"><TextBlock Text="{Binding AmountText}" Foreground="#9D3037" FontWeight="Bold" FontSize="11" TextAlignment="Right" /><TextBlock Text="{Binding CreditText}" Classes="muted" FontSize="9" TextAlignment="Right" Margin="0,4,0,0" /></StackPanel><Button Grid.Column="3" Classes="secondary" Content="对账" MinHeight="32" Padding="9,4" Tag="{Binding}" Click="CustomerStatement_Click" /></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                        </StackPanel></Border>
+                        <Border Grid.Column="1" Classes="sectionCard" Padding="18"><StackPanel Spacing="18"><StackPanel><TextBlock Text="风险分析" Classes="eyebrow" /><TextBlock Text="应收账龄" FontSize="16" FontWeight="SemiBold" Margin="0,7,0,0" /></StackPanel>
+                            <ItemsControl ItemsSource="{Binding ReceivableAgingRows}"><ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:ReceivableAgingRow"><StackPanel Spacing="8" Margin="0,0,0,8"><Grid ColumnDefinitions="*,Auto"><TextBlock Text="{Binding Label}" Classes="muted" /><TextBlock Grid.Column="1" Text="{Binding AmountText}" FontWeight="SemiBold" FontSize="10" /></Grid><ProgressBar Classes="aging" Value="{Binding Percent}" Maximum="100" Foreground="{Binding ProgressBrush}" /><TextBlock Text="{Binding PercentText}" Classes="muted" FontSize="9" HorizontalAlignment="Right" /></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                        </StackPanel></Border>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel Classes="page" IsVisible="{Binding IsOtherSection}"><TextBlock Text="{Binding SelectedSection}" FontSize="25" FontWeight="Bold" /><Border Classes="card" MinHeight="420"><TextBlock Text="该扩展模块将在核心业务链稳定后继续开发。" Classes="muted" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border></StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- 无边框窗口缩放热区：边缘 6px，四角 10px -->
+        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Height="6" VerticalAlignment="Top" Background="Transparent" Cursor="SizeNorthSouth" Tag="North" PointerPressed="ResizeBorder_PointerPressed" PointerMoved="ResizeBorder_PointerMoved" PointerReleased="ResizeBorder_PointerReleased" PointerCaptureLost="ResizeBorder_PointerCaptureLost" />
+        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Height="6" VerticalAlignment="Bottom" Background="Transparent" Cursor="SizeNorthSouth" Tag="South" PointerPressed="ResizeBorder_PointerPressed" PointerMoved="ResizeBorder_PointerMoved" PointerReleased="ResizeBorder_PointerReleased" PointerCaptureLost="ResizeBorder_PointerCaptureLost" />
+        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Width="6" HorizontalAlignment="Left" Background="Transparent" Cursor="SizeWestEast" Tag="West" PointerPressed="ResizeBorder_PointerPressed" PointerMoved="ResizeBorder_PointerMoved" PointerReleased="ResizeBorder_PointerReleased" PointerCaptureLost="ResizeBorder_PointerCaptureLost" />
+        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Width="6" HorizontalAlignment="Right" Background="Transparent" Cursor="SizeWestEast" Tag="East" PointerPressed="ResizeBorder_PointerPressed" PointerMoved="ResizeBorder_PointerMoved" PointerReleased="ResizeBorder_PointerReleased" PointerCaptureLost="ResizeBorder_PointerCaptureLost" />
+        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" Cursor="TopLeftCorner" Tag="NorthWest" PointerPressed="ResizeBorder_PointerPressed" PointerMoved="ResizeBorder_PointerMoved" PointerReleased="ResizeBorder_PointerReleased" PointerCaptureLost="ResizeBorder_PointerCaptureLost" />
+        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Cursor="TopRightCorner" Tag="NorthEast" PointerPressed="ResizeBorder_PointerPressed" PointerMoved="ResizeBorder_PointerMoved" PointerReleased="ResizeBorder_PointerReleased" PointerCaptureLost="ResizeBorder_PointerCaptureLost" />
+        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="Transparent" Cursor="BottomLeftCorner" Tag="SouthWest" PointerPressed="ResizeBorder_PointerPressed" PointerMoved="ResizeBorder_PointerMoved" PointerReleased="ResizeBorder_PointerReleased" PointerCaptureLost="ResizeBorder_PointerCaptureLost" />
+        <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" Cursor="BottomRightCorner" Tag="SouthEast" PointerPressed="ResizeBorder_PointerPressed" PointerMoved="ResizeBorder_PointerMoved" PointerReleased="ResizeBorder_PointerReleased" PointerCaptureLost="ResizeBorder_PointerCaptureLost" />
+
+    </Grid>
+</Window>

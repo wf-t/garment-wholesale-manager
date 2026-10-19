@@ -1,0 +1,15 @@
+bin/
+obj/
+.idea/
+.vscode/
+.vs/
+.DS_Store
+.tools/
+artifacts/
+releases/
+data/
+logs/
+*.db
+*.db-shm
+*.db-wal
+*.user

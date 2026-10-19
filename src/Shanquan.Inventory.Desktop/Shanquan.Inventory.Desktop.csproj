@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>GarmentWholesaleManager</AssemblyName>
+    <Product>服装进销存批发管理</Product>
+    <Title>服装进销存批发管理</Title>
+    <Description>面向服装批发业务的离线进销存管理系统</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shanquan.Inventory.Application\Shanquan.Inventory.Application.csproj" />
+    <ProjectReference Include="..\Shanquan.Inventory.Infrastructure\Shanquan.Inventory.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
